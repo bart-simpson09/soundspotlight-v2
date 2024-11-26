@@ -1,3 +1,4 @@
+name: 'soundspotlight-v2'
 services:
   pgadmin:
     image: dpage/pgadmin4

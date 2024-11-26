@@ -16,6 +16,8 @@ services:
   database:
     image: postgres:17.2
     container_name: database
+    ports:
+      - '5432:5432'
     volumes:
       - database_data:/var/lib/postgresql/data
     env_file:
@@ -33,7 +35,7 @@ services:
       watch:
         - action: sync
           path: src
-          target: /usr/src
+          target: /usr/src/app/src
         - action: rebuild
           path: package.json
           target: /usr/src/app/src/package.json

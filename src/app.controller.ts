@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import {Controller, Get, Inject} from '@nestjs/common';
 import { AppService } from './app.service';
+import {Repository} from "typeorm";
+import {Photo} from "./entities/test.entity";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService,
+              @InjectRepository(Photo) private readonly photosRepository: Repository<Photo>) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello() {
+    return this.photosRepository.find();
   }
 }

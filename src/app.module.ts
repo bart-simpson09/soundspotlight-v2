@@ -1,10 +1,30 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import {databaseProviders} from "./database.providers";
+import {DatabaseModule} from "./database.module";
+import {TypeOrmModule} from "@nestjs/typeorm";
+import {Photo} from "./entities/test.entity";
 
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        host: process.env.POSTGRES_HOST,
+        port: 5432,
+        username: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: 'soundspotlight',
+        entities: [
+          __dirname + '/../**/*.entity.js',
+          //Photo
+        ],
+        synchronize: true,
+        logging: true,
+      }),
+    }), TypeOrmModule.forFeature([Photo]),],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,],
 })
 export class AppModule {}

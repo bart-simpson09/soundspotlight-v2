@@ -1,0 +1,55 @@
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgAdmin
+    ports:
+      - '5050:80'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@dev.dev
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    networks:
+      - soundspotlight
+  database:
+    image: postgres:17.2
+    container_name: database
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    env_file:
+      - database.env
+    networks:
+      - soundspotlight
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start:dev
+    ports:
+      - '8080:3000'
+    develop:
+      watch:
+        - action: sync
+          path: src
+          target: /usr/src
+        - action: rebuild
+          path: package.json
+          target: /usr/src/app/src/package.json
+    environment:
+      POSTGRES_HOST: database
+    env_file:
+      - database.env
+    depends_on:
+      - database
+    networks:
+      - soundspotlight
+
+volumes:
+  pgadmin_data:
+  database_data:
+
+networks:
+  soundspotlight:
+    driver: bridge

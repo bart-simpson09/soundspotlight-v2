@@ -1,15 +1,9 @@
-import '../styles/reset.css'
-import '../styles/fonts.css'
-import '../styles/colors.css'
-import '../styles/flex.css'
-import '../styles/global.css'
-import '../styles/components.css'
-import '../styles/responsive.css'
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
-const Login = () => {
+export const Login: React.FC = () => {
     useEffect(() => {
         document.body.classList.add('singleFormBody');
+        document.title = 'Login';
     }, []);
 
     return (
@@ -42,5 +36,3 @@ const Login = () => {
         </div>
     );
 }
-
-export default Login;

@@ -287,6 +287,6 @@ body {
 
 .errorMessageContainer {
     color: var(--color-red-100);
-    font-size: 14px;
+    font-size: 12px;
     line-height: 22px;
 }

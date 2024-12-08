@@ -1,35 +1,50 @@
-import {Body, Controller, Get, Param, Post, Delete, UseGuards} from '@nestjs/common';
-import User from "./user.entity";
-import {UsersService} from './users.service';
-import { CreateUserDto } from './dto/user.dto';
-import { AuthGuard } from '@nestjs/passport';
+import {Body, Controller, HttpException, Post, Res} from '@nestjs/common';
+import {UsersService} from "./users.service";
+import {Response} from "express";
+import {registerDtoSchema} from "./dtos/registerDtoSchema";
+import {JwtService} from "../shared/jwt.service";
 
-@Controller('users')
+@Controller()
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
-
-    @Get()
-    async getAllUsers(): Promise<User[]> {
-        const users = await this.usersService.getAllUsers();
-        return users;
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly jwtService: JwtService,
+        ) {
     }
 
-    @Get(':id')
-    async getUserById(@Param('id') id: string): Promise<User> {
-        const user = await this.usersService.getUserById(Number(id));
-        return user;
+    @Post('/auth/login')
+    async login(@Res() response: Response, @Body('email') email: string, @Body('password') password: string) {
+        const user = await this.usersService.verify(email, password);
+        if (!user) {
+            throw new HttpException('Invalid credentials', 401);
+        }
+
+        const jwt = await this.jwtService.sign({
+            sub: user.id,
+            email: user.email,
+            role: user.role,
+        });
+        response.cookie('jwt', jwt, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 15,
+        })
+
+        delete user.password;
+
+        response.json(user);
+        response.end();
     }
 
-    @Post()
-    @UseGuards(AuthGuard('jwt'))
-    async createUser(@Body() createUserDto: CreateUserDto) {
-        const newUser = await this.usersService.createUser(createUserDto);
-        return newUser;
-    }
+    @Post('/auth/register')
+    async register(@Body() bodyRaw: object) {
+        const parseSuccess = registerDtoSchema.safeParse(bodyRaw);
+        if (!parseSuccess) {
+            throw new HttpException('Bad request', 400);
+        }
 
-    @Delete(':id')
-    async deleteById(@Param('id') id: string): Promise<User> {
-        const user = this.usersService.deleteById(Number(id));
+        const user = await this.usersService.register(parseSuccess.data);
+        delete user.password;
+
         return user;
     }
 }

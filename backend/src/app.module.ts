@@ -1,29 +1,29 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import * as Joi from '@hapi/joi';
-import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
+import {Module} from '@nestjs/common';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {User} from './entities/user.entity';
+import {UserModule} from "./user/user.module";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        POSTGRES_HOST: Joi.string().required(),
-        POSTGRES_PORT: Joi.number().required(),
-        POSTGRES_USER: Joi.string().required(),
-        POSTGRES_PASSWORD: Joi.string().required(),
-        POSTGRES_DB: Joi.string().required(),
-        PORT: Joi.number(),
-      }),
-    }),
-    DatabaseModule,
-    UsersModule,
-    AuthModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot(),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.get<string>('POSTGRES_HOST'),
+                port: parseInt(configService.get<string>('POSTGRES_PORT', '5432')),
+                username: configService.get<string>('POSTGRES_USER'),
+                password: configService.get<string>('POSTGRES_PASSWORD'),
+                database: configService.get<string>('DATABASE_NAME', 'soundspotlight'),
+                entities: [User],
+                synchronize: true,
+                logging: true,
+            })
+        }),
+        UserModule,
+    ],
 })
-export class AppModule {}
+export class AppModule {
+}

@@ -1,54 +1,41 @@
-import { NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import User from './user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import {Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import {User} from "../entities/user.entity";
+import {RegisterDto} from "./dtos/registerDtoSchema";
 
+@Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
-    ) {}
-
-    async getAllUsers() {
-        const users = this.usersRepository.find();
-        return users;
+    ) {
     }
 
-    async getUserById(id: number) {
-        const user = await this.usersRepository.findOne({
-            where: {
-                id: id,
-            },
-        });
-        if (user) {
-            return user;
-        }
-        throw new NotFoundException('User does not exist');
-    }
-
-    async createUser(createUserDto: CreateUserDto) {
-        const newUser = await this.usersRepository.create(createUserDto);
-        await this.usersRepository.save({
-            firstName: createUserDto.firstName,
-            lastName: createUserDto.lastName,
-            email: createUserDto.email,
-            password: createUserDto.password,
-        });
-        return newUser;
-    }
-
-    async deleteById(id: number) {
-        const user = await this.usersRepository.findOne({
-            where: {
-                id: id,
-            },
-        });
+    async verify(email: string, password: string): Promise<User | null> {
+        const user = await this.usersRepository.findOneBy({email})
         if (!user) {
             return null;
         }
 
-        await this.usersRepository.remove(user);
+        const success = await bcrypt.compare(password, user.password);
+        if (!success) {
+            return null;
+        }
+
         return user;
+    }
+
+    async register(dto: RegisterDto) {
+        const hash = await bcrypt.hash(dto.password, 8);
+
+        return this.usersRepository.save({
+            email: dto.email,
+            password: hash,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            avatar: 'https://avatars.dicebear.com/api/human/john-doe.svg',
+        })
     }
 }

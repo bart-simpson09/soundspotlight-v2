@@ -3,6 +3,7 @@ import {UsersService} from "./users.service";
 import {Response} from "express";
 import {registerDtoSchema} from "./dtos/registerDtoSchema";
 import {JwtService} from "../shared/jwt.service";
+import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
 
 @Controller()
 export class UsersController {
@@ -13,8 +14,15 @@ export class UsersController {
     }
 
     @Post('/auth/login')
-    async login(@Res() response: Response, @Body('email') email: string, @Body('password') password: string) {
-        const user = await this.usersService.verify(email, password);
+    async login(@Res() response: Response, @Body() bodyRaw: object) {
+        const parseSuccess = loginDtoSchema.safeParse(bodyRaw);
+        if (!parseSuccess.success) {
+            throw new HttpException('Invalid request body', 400);
+        }
+
+        const loginDto: LoginDto = parseSuccess.data;
+
+        const user = await this.usersService.verify(loginDto);
         if (!user) {
             throw new HttpException('Invalid credentials', 401);
         }
@@ -24,10 +32,11 @@ export class UsersController {
             email: user.email,
             role: user.role,
         });
+
         response.cookie('jwt', jwt, {
             httpOnly: true,
             maxAge: 1000 * 60 * 15,
-        })
+        });
 
         delete user.password;
 

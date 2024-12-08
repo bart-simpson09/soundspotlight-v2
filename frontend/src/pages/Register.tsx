@@ -80,7 +80,8 @@ export const Register: React.FC = () => {
         setValidationErrors(errors);
 
         if (Object.keys(errors).length === 0) {
-            console.log("Form submitted successfully:", formData);
+            const { repeatedPassword, ...formDataToSubmit } = formData;
+            console.log("Form submitted successfully:", formDataToSubmit);
             // Add further logic to handle successful submission
         }
     };

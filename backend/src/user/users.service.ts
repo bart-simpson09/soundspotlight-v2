@@ -4,6 +4,7 @@ import {Repository} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import {User} from "../entities/user.entity";
 import {RegisterDto} from "./dtos/registerDtoSchema";
+import {LoginDto} from "./dtos/loginDtoSchema";
 
 @Injectable()
 export class UsersService {
@@ -13,13 +14,14 @@ export class UsersService {
     ) {
     }
 
-    async verify(email: string, password: string): Promise<User | null> {
-        const user = await this.usersRepository.findOneBy({email})
+    async verify(dto: LoginDto) {
+        const user = await this.usersRepository.findOneBy({ email: dto.email });
+
         if (!user) {
             return null;
         }
 
-        const success = await bcrypt.compare(password, user.password);
+        const success = await bcrypt.compare(dto.password, user.password);
         if (!success) {
             return null;
         }

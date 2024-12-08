@@ -3,6 +3,12 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {User} from './entities/user.entity';
 import {UserModule} from "./user/user.module";
+import {Author} from "./entities/author.entity";
+import {Language} from "./entities/language.entity";
+import {Category} from "./entities/category.entity";
+import {Album} from "./entities/album.entity";
+import {Review} from "./entities/review.entity";
+import {Favorite} from "./entities/favorite.entity";
 
 @Module({
     imports: [
@@ -17,7 +23,7 @@ import {UserModule} from "./user/user.module";
                 username: configService.get<string>('POSTGRES_USER'),
                 password: configService.get<string>('POSTGRES_PASSWORD'),
                 database: configService.get<string>('DATABASE_NAME', 'soundspotlight'),
-                entities: [User],
+                entities: [User, Author, Language, Category, Album, Review, Favorite],
                 synchronize: true,
                 logging: true,
             })

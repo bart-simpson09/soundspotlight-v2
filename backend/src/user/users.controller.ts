@@ -56,4 +56,13 @@ export class UsersController {
 
         return user;
     }
+
+    @Post('/auth/logout')
+    async logout(@Res() response: Response) {
+        response.clearCookie('jwt', {
+            httpOnly: true,
+        });
+        response.status(200).json({ message: 'Logged out successfully' });
+        response.end();
+    }
 }

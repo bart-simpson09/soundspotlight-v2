@@ -84,7 +84,7 @@ export const Login: React.FC = () => {
                         {validationErrors.email && (<p className="errorMessageContainer">{validationErrors.email}</p>)}
                     </div>
                     <div className="inputArea flexColumn rowGap8">
-                        <label htmlFor="password">Passowrd</label>
+                        <label htmlFor="password">Password</label>
                         <input id="password" type="password" name="password" placeholder="Enter your password" onChange={handleChange} onBlur={handleBlur} className={validationErrors.password ? 'inputError' : ''}/>
                         {validationErrors.password && (<p className="errorMessageContainer">{validationErrors.password}</p>)}
                     </div>

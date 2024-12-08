@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from "react";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 export const Register: React.FC = () => {
     useEffect(() => {
@@ -66,6 +68,8 @@ export const Register: React.FC = () => {
         }));
     };
 
+    const navigate = useNavigate();
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const errors: Record<string, string> = {};
@@ -81,8 +85,31 @@ export const Register: React.FC = () => {
 
         if (Object.keys(errors).length === 0) {
             const { repeatedPassword, ...formDataToSubmit } = formData;
-            console.log("Form submitted successfully:", formDataToSubmit);
-            // Add further logic to handle successful submission
+
+            axios.post('http://localhost:8080/auth/register', formDataToSubmit)
+                .then(response => {
+                    navigate('/login');
+                    alert("Registration successful! Now you can log in.");
+                })
+                .catch(error => {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 400) {
+                            const validationErrors = error.response.data.errors || [];
+                            const mappedErrors: Record<string, string> = {};
+                            validationErrors.forEach((err: { field: string; message: string }) => {
+                                mappedErrors[err.field] = err.message;
+                            });
+                            setValidationErrors(mappedErrors);
+                        } else if (error.response?.status === 409) {
+                            setValidationErrors({ email: "User with this email already exists" });
+                        } else {
+                            console.error("Unexpected error during registration:", error.response?.data || error.message);
+                        }
+                    } else {
+                        console.error("Error during registration:", error);
+                    }
+                });
+
         }
     };
 

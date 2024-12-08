@@ -1,7 +1,7 @@
 import {Body, Controller, HttpException, Post, Res} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {Response} from "express";
-import {registerDtoSchema} from "./dtos/registerDtoSchema";
+import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
 import {JwtService} from "../shared/jwt.service";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
 
@@ -46,14 +46,22 @@ export class UsersController {
 
     @Post('/auth/register')
     async register(@Body() bodyRaw: object) {
-        const parseSuccess = registerDtoSchema.safeParse(bodyRaw);
-        if (!parseSuccess) {
-            throw new HttpException('Bad request', 400);
+        const parseResult = registerDtoSchema.safeParse(bodyRaw);
+        if (!parseResult.success) {
+            const validationErrors = parseResult.error.errors.map(err => ({
+                field: err.path[0],
+                message: err.message,
+            }));
+            throw new HttpException(
+                { message: 'Validation failed', errors: validationErrors },
+                400
+            );
         }
 
-        const user = await this.usersService.register(parseSuccess.data);
-        delete user.password;
+        const dto: RegisterDto = parseResult.data;
 
+        const user = await this.usersService.register(dto);
+        delete user.password;
         return user;
     }
 

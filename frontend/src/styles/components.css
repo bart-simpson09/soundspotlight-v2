@@ -1,0 +1,611 @@
+/* Component A */
+a,
+a:active,
+a:visited {
+    color: var(--text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+a:hover {
+    color: var(--text-primary-teal);
+}
+
+/* Component ICON */
+
+i {
+    font-size: 24px;
+    color: var(--text-secondary);
+}
+
+/* Component HAMBURGER MENU */
+
+.hamburgerMenu {
+    display: none;
+}
+
+.hamburgerBar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 6px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: var(--color-grey-60);
+    border-radius: 8px;
+}
+
+/* Component NAV */
+
+nav {
+    background-color: var(--background-container);
+    padding: 16px 24px;
+    border-radius: 8px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* Component BUTTON */
+
+.buttonPrimary {
+    background-color: var(--color-teal-100);
+    color: var(--text-primary-white);
+    padding: 11.5px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.buttonPrimary:hover:enabled {
+    background-color: var(--color-teal-80);
+}
+
+.buttonSecondary {
+    background-color: var(--color-teal-10);
+    color: var(--text-primary-teal);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    line-height: 16px;
+}
+
+.buttonSecondary:hover:enabled {
+    background-color: var(--color-teal-20);
+}
+
+.buttonOutlined {
+    background-color: var(--color-pure-white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--color-grey-60);
+    font-size: 14px;
+    white-space: nowrap;
+    color: var(--text-secondary);
+}
+
+.buttonOutlined:hover:enabled {
+    background-color: var(--color-grey-30);
+    color: var(--text-primary-dark);
+}
+
+.buttonOutlined.importantAction {
+    border: 1px solid var(--color-red-100);
+    color: var(--color-red-100);
+}
+
+.buttonOutlined.importantAction:hover {
+    background-color: var(--color-red-100);
+    color: var(--text-primary-white);
+}
+
+.buttonOutlined.positiveAction {
+    border: 1px solid var(--color-teal-100);
+    color: var(--color-teal-100);
+}
+
+.buttonOutlined.positiveAction:hover {
+    background-color: var(--color-teal-100);
+    color: var(--text-primary-white);
+}
+
+.buttonDisabled {
+    background-color: var(--color-grey-30);
+    color: var(--color-grey-60);
+    cursor: unset;
+}
+
+.goBackButton {
+    color: var(--text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.goBackButton:hover {
+    color: var(--text-primary-teal);
+    cursor: pointer;
+}
+
+/* Component LABEL */
+
+label {
+    font-size: 14px;
+    color: var(--text-primary-dark);
+}
+
+/* Component INPUT and TEXTAREA */
+
+input,
+textarea {
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-grey-30);
+    font-size: 14px !important;
+    background-color: var(--color-pure-white);
+    resize: none;
+    min-height: 40px;
+}
+
+textarea {
+    padding: 12px;
+}
+
+input:focus,
+textarea:focus {
+    border: 1px solid var(--color-teal-100);
+}
+
+.inputWithIcon {
+    position: relative;
+}
+
+.inputWithIcon input {
+    padding-left: 36px;
+}
+
+.inputWithIcon select {
+    padding-left: 36px;
+}
+
+.inputWithIcon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.inputArea {
+    width: 100%;
+    min-width: 200px;
+}
+
+.inputArea input {
+    width: -webkit-fill-available;
+}
+
+.inputArea textarea {
+    width: -webkit-fill-available;
+}
+
+input::file-selector-button {
+    background-color: var(--color-teal-10);
+    color: var(--text-primary-teal);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    line-height: 16px;
+    border: none;
+}
+
+input::file-selector-button:hover {
+    background-color: var(--color-teal-20);
+}
+
+#photoInput {
+    padding: 0;
+    border: none;
+    font-size: unset;
+    background-color: unset;
+    resize: unset;
+    min-height: unset;
+    width: 100%;
+}
+
+.inputError {
+    border: 1px solid var(--color-red-100) !important;
+}
+
+/* Component SELECT */
+
+.customSelect {
+    position: relative;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    cursor: pointer;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-grey-30);
+    font-size: 14px !important;
+    background-color: var(--color-pure-white);
+    min-height: 40px;
+}
+
+.customSelect::before,
+.customSelect::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+}
+
+.customSelect::before {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid var(--color-pure-black);
+    top: 40%;
+}
+
+.customSelect::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--color-pure-black);
+    top: 55%;
+}
+
+/* Component ALBUM ITEM */
+
+.albumItem {
+    background-color: var(--color-grey-10);
+    border: 1px solid var(--color-grey-30);
+    border-radius: 16px;
+    width: 100%;
+    min-width: 200px;
+}
+
+.albumItem:hover {
+    cursor: pointer;
+}
+
+.albumItemContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.favoriteButton i {
+    color: var(--color-pure-white);
+    font-size: 16px;
+}
+
+.albumItemCoverArea {
+    height: 200px;
+    position: relative;
+}
+
+.albumItemCover {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px 16px 0 0;
+    object-fit: cover;
+}
+
+.albumItemContent {
+    padding: 0 16px 16px 16px;
+    width: 100%;
+}
+
+.albumItemDetailLabel {
+    min-width: 88px;
+}
+
+.albumItemDetailText {
+    color: var(--text-primary-dark);
+    text-wrap: wrap;
+    width: 100%;
+}
+
+/* Component ALBUM DETAILS OPINION ITEM */
+
+.albumDetailsOpinionItem {
+    background-color: var(--color-grey-10);
+    padding: 16px;
+    border-radius: 16px;
+    align-items: flex-start;
+}
+
+.opinionContent {
+    width: 100%;
+}
+
+.opinionDescription {
+    line-height: 24px;
+    font-weight: 300;
+    color: var(--text-primary-dark);
+}
+
+.opinionAuthorAvatar {
+    width: 168px;
+    height: 168px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px;
+}
+
+.opinionHeader {
+    justify-content: space-between;
+}
+
+.opinionAurhor {
+    color: var(--text-primary-dark);
+    font-weight: 500;
+}
+
+.opinionItemDivider {
+    width: 8px;
+    height: 2px;
+    background-color: var(--color-teal-100);
+    border-radius: 2px;
+}
+
+.opinionRate {
+    color: var(--text-primary-teal);
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.opinionRate i {
+    font-size: 20px;
+    color: var(--color-teal-100);
+}
+
+/* Component TAB ITEM */
+
+.tabItem {
+    background-color: var(--color-grey-10);
+    border-radius: 8px;
+    padding: 8px 16px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary-dark);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tabItem i {
+    color: var(--color-grey-60);
+}
+
+.tabItem:hover {
+    background-color: var(--color-teal-10);
+}
+
+.tabItem.active {
+    background-color: var(--color-teal-20);
+}
+
+.tabItem.active i {
+    color: var(--color-teal-100);
+}
+
+.tabContent {
+    display: none;
+}
+
+/* Component YOUR PROFILE ITEM */
+
+.yourProfileItem {
+    background-color: var(--color-grey-10);
+    border-radius: 16px;
+    padding: 16px;
+    align-items: flex-start;
+}
+
+.yourProfileItemHeader {
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.yourProfileItem p {
+    color: var(--text-primary-dark);
+    font-weight: 300;
+    line-height: 24px;
+}
+
+.yourAddedElementStatus {
+    font-size: 14px;
+    line-height: normal;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.statusApproved {
+    color: var(--color-green-100);
+    background-color: var(--color-green-50);
+}
+
+.statusDeclined {
+    color: var(--color-red-100);
+    background-color: var(--color-red-50);
+}
+
+.statusPending {
+    color: var(--text-secondary);
+    background-color: var(--color-grey-30);
+}
+
+/* Component TOAST */
+
+#toast {
+    visibility: hidden;
+    max-width: 56px;
+    height: 48px;
+    margin: auto;
+    background-color: var(--toast-background);
+    color: var(--text-primary-white);
+    border-radius: 12px;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    font-size: 14px;
+    white-space: nowrap;
+    display: flex;
+}
+
+#toast #toastIconArea {
+    width: 48px;
+    height: 48px;
+    padding: 8px 12px;
+    border-radius: 12px;
+}
+
+#iconCircle {
+    background-color: var(--color-teal-100);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 32px;
+}
+
+#iconCircle i {
+    color: var(--color-pure-white);
+    font-size: 24px;
+}
+
+#toast #toastDescription {
+    color: var(--text-primary-white);
+    padding: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+#toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 2s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, expand 0.5s 0.5s, stay 3s 1s, shrink 0.5s 4s, fadeout 0.5s 4.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 40px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 40px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes expand {
+    from {
+        min-width: 48px
+    }
+    to {
+        min-width: 400px
+    }
+}
+
+@keyframes expand {
+    from {
+        min-width: 48px
+    }
+    to {
+        min-width: 400px
+    }
+}
+
+@-webkit-keyframes stay {
+    from {
+        min-width: 400px
+    }
+    to {
+        min-width: 400px
+    }
+}
+
+@keyframes stay {
+    from {
+        min-width: 400px
+    }
+    to {
+        min-width: 400px
+    }
+}
+
+@-webkit-keyframes shrink {
+    from {
+        min-width: 400px;
+    }
+    to {
+        min-width: 48px;
+    }
+}
+
+@keyframes shrink {
+    from {
+        min-width: 400px;
+    }
+    to {
+        min-width: 48px;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 40px;
+        opacity: 1;
+    }
+    to {
+        bottom: 64px;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 40px;
+        opacity: 1;
+    }
+    to {
+        bottom: 64px;
+        opacity: 0;
+    }
+}

@@ -1,0 +1,145 @@
+@media (max-width: 520px) {
+    .albumsList {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .opinionBasicInfo {
+        flex-direction: column;
+        row-gap: 4px;
+        align-items: baseline;
+    }
+
+    .opinionBasicInfo span {
+        display: none;
+    }
+
+    .mobileWrapped {
+        flex-wrap: wrap;
+    }
+
+    .yourProfileItemHeader {
+        flex-direction: column;
+        align-items: baseline;
+        row-gap: 16px;
+    }
+}
+
+@media (min-width: 520px) and (max-width: 740px) {
+    .albumsList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mobileWrapped {
+        flex-wrap: wrap;
+    }
+
+    .yourProfileItemHeader {
+        flex-direction: column;
+        align-items: baseline;
+        row-gap: 16px;
+    }
+}
+
+@media (min-width: 741px) and (max-width: 960px) {
+    .albumsList {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 961px) and (max-width: 1220px) {
+    .albumsList {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1221px) {
+    .albumsList {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .searchBar {
+        flex-wrap: nowrap;
+    }
+}
+
+@media (max-width: 1220px) {
+    body {
+        padding: 16px;
+    }
+
+    nav.active {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .menuArea {
+        display: none;
+
+    }
+
+    .menuArea.active {
+        visibility: visible;
+        background-color: var(--background-container);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        top: 74px;
+        left: 0;
+        right: 0;
+        border-radius: 0 0 8px 8px;
+        padding: 16px 16px 24px 16px;
+        position: absolute;
+        box-shadow: 0 24px 24px 0 rgba(0, 0, 0, 0.04);
+    }
+
+    .menuArea.active .menuOptions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .menuArea.active .menuOptions a {
+        border-radius: 8px;
+        padding: 16px 24px;
+        background-color: var(--color-pure-white);
+        width: 100%;
+    }
+
+    .menuArea.active .menuOptions a:hover {
+        background-color: var(--color-grey-20);
+    }
+
+    .menuArea.active .userSide {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        padding: 0 24px;
+        margin-top: 40px;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+
+    .menuArea.active .userSide .menuDivider {
+        display: none;
+    }
+
+    .hamburgerMenu {
+        display: block;
+        cursor: pointer;
+    }
+
+    .hamburgerMenu.active .hamburgerBar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburgerMenu.active .hamburgerBar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburgerMenu.active .hamburgerBar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .searchBar {
+        flex-wrap: wrap;
+    }
+}

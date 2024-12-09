@@ -1,0 +1,292 @@
+/* OTHERS */
+
+body {
+    background-color: var(--background-page);
+    padding: 32px;
+}
+
+.standardAvatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 40px;
+}
+
+.globalPageContainer {
+    margin-top: 32px;
+    border-radius: 16px;
+    background-color: var(--background-container);
+    padding: 24px 24px 40px 24px;
+    gap: 40px;
+}
+
+.narrowPageContainer {
+    max-width: 720px;
+    margin: 32px auto;
+}
+
+.searchBar {
+    background-color: var(--color-grey-20);
+    padding: 16px;
+    border-radius: 16px;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+}
+
+.dividerHorizon40 {
+    width: 40px;
+    height: 2px;
+    background-color: var(--color-teal-100);
+}
+
+/* MENU */
+
+.profile p {
+    white-space: nowrap;
+}
+
+.menuArea {
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.menuOptions {
+    justify-content: center;
+    width: 100%;
+}
+
+.menuOptions a.active {
+    color: var(--text-primary-teal);
+}
+
+.iconBox {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: var(--color-grey-20);
+}
+
+.iconBox i {
+    font-size: 20px;
+    color: var(--color-teal-100);
+}
+
+.menuDivider {
+    height: 16px;
+    width: 1px;
+    background-color: var(--color-grey-40);
+}
+
+/* ALBUMS LIST */
+
+.albumsList {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+}
+
+.favouriteButtonDefault {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(248, 249, 255, 0.50);
+    backdrop-filter: blur(2px);
+    color: var(--color-pure-white) !important;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.favouriteButtonDefault:hover {
+    cursor: pointer;
+    background-color: var(--color-teal-100);
+}
+
+/* SINGLE FORM */
+
+.singleFormBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 24px;
+}
+
+.singleFormContainer {
+    background-color: var(--background-container);
+    padding: 24px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.singleFormDivider {
+    width: 64px;
+    height: 2px;
+    border-radius: 8px;
+    background-color: var(--color-teal-100);
+}
+
+.formFooter a {
+    color: var(--text-primary-dark) !important;
+    font-weight: 500;
+}
+
+/* ALBUM DETAILS */
+
+.albumDetailsTop {
+    flex-wrap: wrap;
+    row-gap: 32px;
+}
+
+.albumDetailsDescription {
+    color: var(--text-primary-dark);
+    line-height: 24px;
+}
+
+.albumDetailsCover {
+    width: 168px;
+    height: 168px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px;
+}
+
+.albumDetailsFavourite {
+    color: var(--color-teal-100);
+}
+
+.albumDetailsFavourite:hover {
+    cursor: pointer;
+}
+
+.albumDetailsAttributeList {
+    flex-wrap: wrap;
+}
+
+.albumDetailsAttribute p {
+    color: var(--text-primary-dark);
+    font-weight: 500;
+}
+
+.albumDetailsAttributeIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: var(--color-teal-20);
+}
+
+.albumDetailsAttributeIcon i {
+    font-size: 20px;
+    color: var(--color-teal-100);
+}
+
+.albumDetailsOpinions .header {
+    justify-content: space-between;
+}
+
+/* MY PROFILE */
+
+.myProfileAvatar {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 12px;
+}
+
+.albumSmallCover {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.shortAlbumDescription {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    align-self: stretch;
+}
+
+#uploadedCoverPreview {
+    border: 1px solid var(--color-grey-30);
+}
+
+/* ADMIN CONSOLE */
+
+.pendingDivider {
+    width: 100%;
+    height: 1px;
+    border-radius: 4px;
+    background-color: var(--color-grey-30);
+}
+
+#manageUsers i {
+    color: var(--color-teal-100);
+}
+
+#userNameSection {
+    min-height: 24px;
+}
+
+/* MODAL */
+
+.modalArea {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    position: fixed;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    margin: 0;
+}
+
+.modal {
+    background-color: var(--background-container);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 40px 0 rgba(0, 0, 0, 0.16);
+    max-width: 400px;
+}
+
+.modal i {
+    font-size: 20px;
+}
+
+.modal button {
+    width: 100%;
+}
+
+.ratingStar:hover {
+    cursor: pointer;
+}
+
+#addReviewModal .iconoir-star-solid {
+    color: gold;
+}
+
+.stars:hover > i:before {
+    color: gold;
+}
+
+.stars > i:hover ~ i:before {
+    color: var(--text-secondary);
+}
+
+/* ERROR MESSAGES */
+
+.errorMessageContainer {
+    color: var(--color-red-100);
+    font-size: 12px;
+    line-height: 22px;
+}

@@ -1,0 +1,49 @@
+* {
+    font-family: "Inter", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 400;
+}
+
+.fontMedium {
+    font-weight: 500;
+}
+
+p {
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--text-secondary);
+}
+
+h1 {
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 400;
+    color: var(--text-primary-dark);
+}
+
+h2 {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 400;
+    color: var(--text-primary-dark);
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary-dark);
+    text-wrap: wrap;
+    line-height: 22px;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary-dark);
+}
+
+h5 {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}

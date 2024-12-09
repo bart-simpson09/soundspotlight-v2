@@ -1,30 +1,36 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import {databaseProviders} from "./database.providers";
-import {DatabaseModule} from "./database.module";
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {Photo} from "./entities/test.entity";
+import {Module} from '@nestjs/common';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {User} from './entities/user.entity';
+import {UserModule} from "./user/user.module";
+import {Author} from "./entities/author.entity";
+import {Language} from "./entities/language.entity";
+import {Category} from "./entities/category.entity";
+import {Album} from "./entities/album.entity";
+import {Review} from "./entities/review.entity";
+import {Favorite} from "./entities/favorite.entity";
+
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        type: 'postgres',
-        host: process.env.POSTGRES_HOST,
-        port: 5432,
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: 'soundspotlight',
-        entities: [
-          __dirname + '/../**/*.entity.js',
-          //Photo
-        ],
-        synchronize: true,
-        logging: true,
-      }),
-    }), TypeOrmModule.forFeature([Photo]),],
-  controllers: [AppController],
-  providers: [AppService,],
+    imports: [
+        ConfigModule.forRoot(),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: 'postgres',
+                host: configService.get<string>('POSTGRES_HOST'),
+                port: parseInt(configService.get<string>('POSTGRES_PORT', '5432')),
+                username: configService.get<string>('POSTGRES_USER'),
+                password: configService.get<string>('POSTGRES_PASSWORD'),
+                database: configService.get<string>('DATABASE_NAME', 'soundspotlight'),
+                entities: [User, Author, Language, Category, Album, Review, Favorite],
+                synchronize: true,
+                logging: true,
+            })
+        }),
+        UserModule,
+    ],
 })
-export class AppModule {}
+export class AppModule {
+}

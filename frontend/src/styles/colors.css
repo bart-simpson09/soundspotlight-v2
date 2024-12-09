@@ -1,0 +1,33 @@
+:root {
+    --text-primary-dark: #000000;
+    --text-primary-white: #FFFFFF;
+    --text-primary-teal: #4CA6A8;
+    --text-secondary: #6B717D;
+    --text-tertiary: #8287A0;
+
+    --background-page: #F4F5F7;
+    --background-container: #FFFFFF;
+    --background-overlay: rgba(0, 0, 0, 0.4);
+
+    --color-pure-black: #000000;
+    --color-pure-white: #FFFFFF;
+
+    --color-teal-100: #4CA6A8;
+    --color-teal-80: #64BABC;
+    --color-teal-20: #E4F2F2;
+    --color-teal-10: #EDF6F6;
+
+    --color-grey-60: #9195AA;
+    --color-grey-40: #D3D5DD;
+    --color-grey-30: #E8EAEE;
+    --color-grey-20: #F5F6F8;
+    --color-grey-10: #FCFCFC;
+
+    --color-green-100: #036846;
+    --color-green-50: #D2EBDF;
+
+    --color-red-100: #DB183F;
+    --color-red-50: #FFDEE5;
+
+    --toast-background: #3A3A41;
+}

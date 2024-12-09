@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../auth/AuthController";
 
 export const Login: React.FC = () => {
+    const { isAuthenticated, login } = useAuth();
+    const navigate = useNavigate();
+
     useEffect(() => {
         document.body.classList.add('singleFormBody');
         document.title = 'Login';
-    }, []);
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -29,8 +36,6 @@ export const Login: React.FC = () => {
         }));
     };
 
-    const navigate = useNavigate();
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const errors: Record<string, string> = {};
@@ -45,11 +50,10 @@ export const Login: React.FC = () => {
         setValidationErrors(errors);
 
         if (Object.keys(errors).length === 0) {
-
             axios
                 .post('http://localhost:8080/auth/login', formData, { withCredentials: true })
                 .then((response) => {
-                    console.log('Login successful:', response.data);
+                    login();
                     navigate('/dashboard');
                 })
                 .catch((error) => {
@@ -73,7 +77,6 @@ export const Login: React.FC = () => {
                 });
         }
     };
-
 
     const validateField = (name: string, value: string) => {
         let error = '';

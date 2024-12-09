@@ -1,6 +1,6 @@
-import {Body, Controller, HttpException, Post, Res} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, Post, Req, Res} from '@nestjs/common';
 import {UsersService} from "./users.service";
-import {Response} from "express";
+import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
 import {JwtService} from "../shared/jwt.service";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
@@ -72,5 +72,21 @@ export class UsersController {
         });
         response.status(200).json({ message: 'Logged out successfully' });
         response.end();
+    }
+
+    @Get('/auth/check')
+    async checkAuth(@Req() req: Request, @Res() res: Response) {
+        const token = req.cookies?.jwt;
+
+        if (!token) {
+            return res.status(200).json({ isAuthenticated: false });
+        }
+
+        try {
+            const payload = await this.jwtService.verify(token);
+            return res.status(200).json({ isAuthenticated: true, user: payload });
+        } catch (err) {
+            return res.status(200).json({ isAuthenticated: false });
+        }
     }
 }

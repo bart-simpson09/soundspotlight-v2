@@ -10,6 +10,7 @@ import {Album} from "./entities/album.entity";
 import {Review} from "./entities/review.entity";
 import {Favorite} from "./entities/favorite.entity";
 
+
 @Module({
     imports: [
         ConfigModule.forRoot(),

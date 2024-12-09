@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../auth/AuthController";
 
 export const Register: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
     useEffect(() => {
         document.body.classList.add('singleFormBody');
         document.title = 'Register';
-    }, []);
+
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, [isAuthenticated, navigate]);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -68,8 +76,6 @@ export const Register: React.FC = () => {
         }));
     };
 
-    const navigate = useNavigate();
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const errors: Record<string, string> = {};
@@ -112,7 +118,6 @@ export const Register: React.FC = () => {
 
         }
     };
-
 
     return (
         <div className="singleFormContainer flexColumn rowGap32">

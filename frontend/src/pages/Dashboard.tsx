@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 
-export const Login: React.FC = () => {
+export const Dashboard: React.FC = () => {
     useEffect(() => {
         document.title = 'Dashboard';
     }, []);

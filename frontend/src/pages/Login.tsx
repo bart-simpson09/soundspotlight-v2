@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from "react";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 export const Login: React.FC = () => {
     useEffect(() => {
@@ -27,6 +29,8 @@ export const Login: React.FC = () => {
         }));
     };
 
+    const navigate = useNavigate();
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const errors: Record<string, string> = {};
@@ -41,10 +45,35 @@ export const Login: React.FC = () => {
         setValidationErrors(errors);
 
         if (Object.keys(errors).length === 0) {
-            console.log("Form submitted successfully:", formData);
-            // Add further logic to handle successful login
+
+            axios
+                .post('http://localhost:8080/auth/login', formData, { withCredentials: true })
+                .then((response) => {
+                    console.log('Login successful:', response.data);
+                    navigate('/dashboard');
+                })
+                .catch((error) => {
+                    if (axios.isAxiosError(error)) {
+                        const { status, data } = error.response || {};
+                        if (status === 400) {
+                            const validationErrors = data?.errors || [];
+                            const mappedErrors: Record<string, string> = {};
+                            validationErrors.forEach((err: { field: string; message: string }) => {
+                                mappedErrors[err.field] = err.message;
+                            });
+                            setValidationErrors(mappedErrors);
+                        } else if (status === 401) {
+                            setValidationErrors({ email: 'Invalid email or password' });
+                        } else {
+                            console.error("Unexpected error during login:", error.message);
+                        }
+                    } else {
+                        console.error("Error during login:", error);
+                    }
+                });
         }
     };
+
 
     const validateField = (name: string, value: string) => {
         let error = '';

@@ -11,13 +11,15 @@ interface AuthContextProps {
     login: () => void;
     logout: () => void;
     checkAuth: () => Promise<void>;
+    authChecked: boolean;
 }
 
-const AuthController = createContext<AuthContextProps | null>(null);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<Record<string, any> | null>(null);
+    const [authChecked, setAuthChecked] = useState(false);
 
     const checkAuth = async () => {
         try {
@@ -27,12 +29,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch {
             setIsAuthenticated(false);
             setUser(null);
+        } finally {
+            setAuthChecked(true);
         }
     };
 
-    const login = () => {
+    const login = async () => {
+        await checkAuth();
         setIsAuthenticated(true);
-        checkAuth();
     };
 
     const logout = async () => {
@@ -46,14 +50,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthController.Provider value={{ isAuthenticated, user, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, checkAuth, authChecked }}>
             {children}
-        </AuthController.Provider>
+        </AuthContext.Provider>
     );
 };
 
-export const useAuth = () => {
-    const context = useContext(AuthController);
-    if (!context) throw new Error('useAuth must be used within an AuthProvider');
+export const useAuth = (): AuthContextProps => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
     return context;
 };

@@ -1,13 +1,14 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './AuthController';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
-export const ProtectedRoutes: React.FC = () => {
-    const { isAuthenticated } = useAuth();
+export const ProtectedRoute: React.FC = () => {
+    const { isAuthenticated, authChecked } = useAuth();
+    const location = useLocation();
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" />;
+    if (!authChecked) {
+        return null;
     }
 
-    return <Outlet />;
+    return isAuthenticated ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />;
 };

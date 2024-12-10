@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../auth/AuthController";
+import {useAuth} from "../auth/AuthContext";
 
 export const Register: React.FC = () => {
     const { isAuthenticated } = useAuth();

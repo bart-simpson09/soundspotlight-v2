@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import NavBar from "../components/NavBar";
 
 export const AdminConsole: React.FC = () => {
 
@@ -7,8 +8,6 @@ export const AdminConsole: React.FC = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Admin console</h1>
-        </div>
+        <NavBar highlighted="adminConsole" />
     );
 };

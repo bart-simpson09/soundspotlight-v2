@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import NavBar from "../components/NavBar";
 
 export const TopAlbums: React.FC = () => {
 
@@ -7,8 +8,6 @@ export const TopAlbums: React.FC = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Top albums</h1>
-        </div>
+        <NavBar highlighted="topAlbums" />
     );
 };

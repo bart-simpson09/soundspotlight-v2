@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import NavBar from "../components/NavBar";
 
 export const YourFavorites: React.FC = () => {
 
@@ -7,8 +8,6 @@ export const YourFavorites: React.FC = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Your favorites</h1>
-        </div>
+        <NavBar highlighted="yourFavorites" />
     );
 };

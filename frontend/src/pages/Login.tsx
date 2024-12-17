@@ -54,7 +54,8 @@ export const Login: React.FC = () => {
                 .post('http://localhost:8080/auth/login', formData, { withCredentials: true })
                 .then((response) => {
                     login();
-                    navigate('/dashboard');
+                    console.log(response.data);
+                    navigate('/dashboard', { state: { userData: response.data } });
                 })
                 .catch((error) => {
                     if (axios.isAxiosError(error)) {
@@ -125,7 +126,7 @@ export const Login: React.FC = () => {
             </form>
             <div className="flexRow columnGap4 flexCenter formFooter">
                 <p>Don’t have an account? </p>
-                <a href="/register">Sign up</a>
+                <a href="/register/Register">Sign up</a>
             </div>
         </div>
     );

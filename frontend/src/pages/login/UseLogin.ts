@@ -9,7 +9,7 @@ export const useLogin = () => {
     const sessionManager = useSessionManager();
 
     const [loading, setLoading] = useState(false);
-    const [searchParams, _] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const rawLogoutParam = searchParams.get('logout');
     const logoutParam = useMemo(() => {
         if (!rawLogoutParam) {
@@ -26,7 +26,12 @@ export const useLogin = () => {
 
     useEffect(() => {
         if (logoutParam === 1) {
-            alert('You have been logged out');
+            console.log("logged out");
+            // alert('You have been logged out');
+            searchParams.delete('logout');
+            setSearchParams(searchParams); // Update the URL
+
+
         }
     }, [logoutParam]);
 

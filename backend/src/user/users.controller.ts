@@ -87,21 +87,21 @@ export class UsersController {
         response.end();
     }
 
-    @Get('/auth/check')
-    async checkAuth(@Req() req: Request, @Res() res: Response) {
-        const token = req.cookies?.jwt;
-
-        if (!token) {
-            return res.status(200).json({ isAuthenticated: false });
-        }
-
-        try {
-            const payload = await this.jwtService.verify(token);
-            return res.status(200).json({ isAuthenticated: true, user: payload });
-        } catch (err) {
-            return res.status(200).json({ isAuthenticated: false });
-        }
-    }
+    // @Get('/auth/check')
+    // async checkAuth(@Req() req: Request, @Res() res: Response) {
+    //     const token = req.cookies?.jwt;
+    //
+    //     if (!token) {
+    //         return res.status(200).json({ isAuthenticated: false });
+    //     }
+    //
+    //     try {
+    //         const payload = await this.jwtService.verify(token);
+    //         return res.status(200).json({ isAuthenticated: true, user: payload });
+    //     } catch (err) {
+    //         return res.status(200).json({ isAuthenticated: false });
+    //     }
+    // }
 
     @Get('/users/:id')
     async user(@Req() req: Request, @Res() res: Response) {

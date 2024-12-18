@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {User} from '../types';
 import {useSessionManager} from "./sessionManager";
+import {Author} from "../types/author";
 
 export interface RegisterDto {
     email: string;
@@ -60,6 +61,28 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     throw error;
                 }
             },
-        })
+        }),
+
+        authors: () => ({
+            get: async () => {
+                try {
+                    return await client<Author[]>(`/authors/`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 401) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        }
+                    }
+                    throw error;
+                }
+            },
+        }),
+
+
     }
 }

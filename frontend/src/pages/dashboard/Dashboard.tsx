@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import NavBar from "../../components/NavBar";
 import { useLocation } from "react-router-dom";
+import {useDashboard} from "./UseDashboard";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
+    const {authors, loading } = useDashboard();
 
 
     useEffect(() => {
@@ -15,7 +17,21 @@ export const Dashboard: React.FC = () => {
         }
     }, [location]);
 
+    if (loading) {
+        return (
+            <div>
+                Loading...
+            </div>
+
+            )
+    }
+
     return (
-        <NavBar highlighted="home" />
+        <>
+            <NavBar highlighted="home" />
+            <p>
+                {authors?.length.toString()}
+            </p>
+        </>
     );
 };

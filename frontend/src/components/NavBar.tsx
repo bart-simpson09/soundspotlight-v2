@@ -10,13 +10,17 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
-    const { logout } = UseNavBar();
+    const { logout, user } = UseNavBar();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        logout();
-        navigate("/login");
-    };
+    if(!user){
+       navigate("/login");
+       return (
+           <>
+           </>
+       )
+
+    }
 
     return (
         <nav>
@@ -26,7 +30,9 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
                     <a className={highlighted === 'home' ? "active" : ""} href="./dashboard">Home</a>
                     <a className={highlighted === 'topAlbums' ? "active" : ""} href="./topAlbums">Top albums</a>
                     <a className={highlighted === 'yourFavorites' ? "active" : ""} href="./yourFavorites">Your favorites</a>
-                    <a className={highlighted === 'adminConsole' ? "active" : ""} href="./adminConsole">Admin console</a>
+                    {user.role === 'admin' && (
+                        <a className={highlighted === 'adminConsole' ? "active" : ""} href="./adminConsole">Admin console</a>
+                    )}
                 </div>
                 <div className={"userSide flexRow columnGap24"}>
                     <button className={"flexRow columnGap8"}>
@@ -39,9 +45,9 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
                     <div className={"userInfo flexRow columnGap16"}>
                         <a href="./myProfile" className={"profile flexRow columnGap8"}>
                             <img className={"standardAvatar"} src={defaultAvatar} alt="User avatar" />
-                            <p className={"fontMedium"}>User name</p>
+                            <p className={"fontMedium"}>{user.firstName + ' ' + user.lastName}</p>
                         </a>
-                        <button className={"flexRow"} onClick={handleLogout} type="button">
+                        <button className={"flexRow"} onClick={logout} type="button">
                             <LogOut color="#70758F" width={24} height={24} />
                         </button>
                     </div>

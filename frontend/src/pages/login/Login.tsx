@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
 import { useLogin } from "./UseLogin";
 
 export const Login: React.FC = () => {
-    const { isAuthenticated, login } = useAuth();
     const { loading, loginUser } = useLogin();
     const navigate = useNavigate();
 
     useEffect(() => {
         document.body.classList.add("singleFormBody");
         document.title = "Login";
-        if (isAuthenticated) {
-            navigate("/");
-        }
-    }, [isAuthenticated, navigate]);
+    }, [navigate]);
 
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -44,15 +39,12 @@ export const Login: React.FC = () => {
         });
 
         if (Object.keys(errors).length === 0) {
-            const result = await loginUser(formData);
-            if (result.success) {
-                login();
-                navigate("/dashboard");
-            } else if (result.errors) {
-                setValidationErrors(result.errors);
+            let email = formData.email;
+            let password = formData.password;
+            const response = await loginUser(email, password);
+            if (response) {
+                setValidationErrors(errors);
             }
-        } else {
-            setValidationErrors(errors);
         }
     };
 

@@ -1,20 +1,44 @@
-import { useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import axios from "axios";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useSessionManager} from "../../utils/sessionManager";
+import {API} from "../../utils/api";
 
-interface UseLoginResult {
-    loading: boolean;
-    loginUser: (credentials: { email: string; password: string }) => Promise<{ success: boolean; errors?: Record<string, string> }>;
-}
+export const useLogin = () => {
+    const navigate = useNavigate();
+    const sessionManager = useSessionManager();
 
-export const useLogin = (): UseLoginResult => {
     const [loading, setLoading] = useState(false);
+    const [searchParams, _] = useSearchParams();
+    const rawLogoutParam = searchParams.get('logout');
+    const logoutParam = useMemo(() => {
+        if (!rawLogoutParam) {
+            return null;
+        }
 
-    const loginUser = async (credentials: { email: string; password: string }) => {
-        setLoading(true);
+        const parsed = parseInt(rawLogoutParam);
+        if (isNaN(parsed)) {
+            return null;
+        }
+
+        return parsed;
+    }, [rawLogoutParam]);
+
+    useEffect(() => {
+        if (logoutParam === 1) {
+            alert('You have been logged out');
+        }
+    }, [logoutParam]);
+
+    const loginUser = async (email: string, password: string ) => {
         try {
-            const response = await axios.post("http://localhost:8080/auth/login", credentials, { withCredentials: true });
-            return { success: true };
+            setLoading(true);
+            const response = await API(sessionManager).login(email, password);
+            setLoading(false);
+            sessionManager.setCurrentUser(response.data);
+            navigate('/dashboard');
         } catch (error: any) {
+            setLoading(false);
             if (axios.isAxiosError(error)) {
                 const { status, data } = error.response || {};
                 if (status === 400 && data?.errors) {
@@ -29,8 +53,6 @@ export const useLogin = (): UseLoginResult => {
             }
             console.error("Login error:", error);
             return { success: false, errors: { general: "Unexpected error occurred" } };
-        } finally {
-            setLoading(false);
         }
     };
 

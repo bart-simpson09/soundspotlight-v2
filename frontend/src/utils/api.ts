@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {User} from '../types';
+import {useSessionManager} from "./sessionManager";
 
 export interface RegisterDto {
     email: string;
@@ -8,9 +9,8 @@ export interface RegisterDto {
     password: string;
 }
 
-export const API = () => {
+export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
     const url = 'http://localhost:8080';
-    console.log(url);
 
     const client = axios.create({
         baseURL: url,
@@ -42,6 +42,24 @@ export const API = () => {
             return client('/auth/logout', {
                 method: 'POST',
             });
-        }
+        },
+
+        user: (id: string) => ({
+            get: async () => {
+                try {
+                    return await client<User>(`/users/${id}`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 401) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+                        }
+                    }
+                    throw error;
+                }
+            },
+        })
     }
 }

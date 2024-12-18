@@ -46,4 +46,8 @@ export class UsersService {
             avatar: 'https://avatars.dicebear.com/api/human/john-doe.svg',
         })
     }
+
+    async getUserById(id: string) {
+        return await this.usersRepository.findOneBy({id: id});
+    }
 }

@@ -45,7 +45,7 @@ export class UsersController {
     }
 
     @Post('/auth/register')
-    async register(@Body() bodyRaw: object) {
+    async register(@Res() response: Response, @Body() bodyRaw: object) {
         const parseResult = registerDtoSchema.safeParse(bodyRaw);
         if (!parseResult.success) {
             const validationErrors = parseResult.error.errors.map(err => ({
@@ -61,8 +61,21 @@ export class UsersController {
         const dto: RegisterDto = parseResult.data;
 
         const user = await this.usersService.register(dto);
+
+        const jwt = await this.jwtService.sign({
+            sub: user.id,
+            email: user.email,
+            role: user.role,
+        });
+
+        response.cookie('jwt', jwt, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 15,
+        });
         delete user.password;
-        return user;
+
+        response.json(user);
+        response.end();
     }
 
     @Post('/auth/logout')
@@ -87,6 +100,24 @@ export class UsersController {
             return res.status(200).json({ isAuthenticated: true, user: payload });
         } catch (err) {
             return res.status(200).json({ isAuthenticated: false });
+        }
+    }
+
+    @Get('/users/:id')
+    async user(@Req() req: Request, @Res() res: Response) {
+        const userId = req.params.id;
+
+        try {
+            const user = await this.usersService.getUserById(userId);
+            delete user.password;
+
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            return res.status(200).json(user);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 }

@@ -1,21 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../auth/AuthContext";
 import {useRegister} from "./UseRegister";
 
 export const Register: React.FC = () => {
-    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const { loading, register } = useRegister();
 
     useEffect(() => {
         document.body.classList.add('singleFormBody');
         document.title = 'Register';
-
-        if (isAuthenticated) {
-            navigate('/');
-        }
-    }, [isAuthenticated, navigate]);
+    }, [navigate]);
 
     const [formData, setFormData] = useState({
         firstName: '',

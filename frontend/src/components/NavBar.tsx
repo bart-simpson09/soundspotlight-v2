@@ -2,19 +2,19 @@ import React from 'react';
 import logo from "../assets/logo.svg";
 import { LogOut, MusicDoubleNote } from "iconoir-react";
 import defaultAvatar from "../assets/imgs/avatars/default-avatar.png";
-import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import {UseNavBar} from "./UseNavBar";
 
 interface NavBarProps {
     highlighted: string;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
-    const { logout } = useAuth();
+    const { logout } = UseNavBar();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await logout();
+        logout();
         navigate("/login");
     };
 

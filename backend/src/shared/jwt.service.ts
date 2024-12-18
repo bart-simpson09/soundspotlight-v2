@@ -26,7 +26,7 @@ export class JwtService {
             alg: 'HS256',
         });
         jwt.setSubject(payload.sub);
-        jwt.setExpirationTime('15m');
+        jwt.setExpirationTime('1m');
 
         return jwt.sign(this.jwtKey);
     }

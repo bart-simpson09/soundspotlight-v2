@@ -9,6 +9,7 @@ import {Category} from "./entities/category.entity";
 import {Album} from "./entities/album.entity";
 import {Review} from "./entities/review.entity";
 import {Favorite} from "./entities/favorite.entity";
+import {AuthorsModule} from "./author/author.module";
 
 
 @Module({
@@ -29,7 +30,7 @@ import {Favorite} from "./entities/favorite.entity";
                 logging: true,
             })
         }),
-        UserModule,
+        UserModule, AuthorsModule,
     ],
 })
 export class AppModule {

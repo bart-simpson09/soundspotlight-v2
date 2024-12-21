@@ -38,12 +38,19 @@ export const Login: React.FC = () => {
             if (error) errors[key] = error;
         });
 
+        setValidationErrors(errors);
+
         if (Object.keys(errors).length === 0) {
             let email = formData.email;
             let password = formData.password;
             const response = await loginUser(email, password);
-            if (response) {
-                setValidationErrors(errors);
+            if (response && !response.success) {
+
+                setValidationErrors((prevErrors) => ({
+                    ...prevErrors,
+                    email: " ",
+                    password: response.errors.email || ""
+                }));
             }
         }
     };

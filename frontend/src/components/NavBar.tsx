@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from "../assets/logo.svg";
 import { LogOut, MusicDoubleNote } from "iconoir-react";
 import defaultAvatar from "../assets/imgs/avatars/default-avatar.png";
 import { useNavigate } from "react-router-dom";
-import {UseNavBar} from "./UseNavBar";
+import { UseNavBar } from "./UseNavBar";
 
 interface NavBarProps {
     highlighted: string;
@@ -12,20 +12,22 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
     const { logout, user } = UseNavBar();
     const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
 
-    if(!user){
-       navigate("/login");
-       return (
-           <>
-           </>
-       )
-
+    if (!user) {
+        navigate("/login");
+        return <></>;
     }
 
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
+
     return (
-        <nav>
+        <nav className={menuOpen ? "active" : ""}>
             <a href="/"><img src={logo} alt="SoundSpotlight Logo" /></a>
-            <div className={"menuArea flexRow"}>
+
+            <div className={`menuArea flexRow ${menuOpen ? "active" : ""}`}>
                 <div className={"menuOptions flexRow columnGap32"}>
                     <a className={highlighted === 'home' ? "active" : ""} href="./dashboard">Home</a>
                     <a className={highlighted === 'topAlbums' ? "active" : ""} href="./topAlbums">Top albums</a>
@@ -54,7 +56,7 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
                 </div>
             </div>
 
-            <div className={"hamburgerMenu"}>
+            <div className={"hamburgerMenu"} onClick={toggleMenu}>
                 <span className={"hamburgerBar"}></span>
                 <span className={"hamburgerBar"}></span>
                 <span className={"hamburgerBar"}></span>

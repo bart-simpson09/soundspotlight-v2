@@ -5,6 +5,7 @@ export const MyProfile: React.FC = () => {
 
     useEffect(() => {
         document.title = 'My profile';
+        document.body.classList.remove("singleFormBody");
     }, []);
 
     return (

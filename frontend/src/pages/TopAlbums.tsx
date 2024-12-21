@@ -5,6 +5,7 @@ export const TopAlbums: React.FC = () => {
 
     useEffect(() => {
         document.title = 'Top albums';
+        document.body.classList.remove("singleFormBody");
     }, []);
 
     return (

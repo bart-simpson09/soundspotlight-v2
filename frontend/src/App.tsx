@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './AppRoutes';
-//import { AuthProvider } from './auth/AuthContext';
 import {SessionManagerProvider} from "./utils/sessionManager";
 
 import './styles/reset.css';

@@ -4,7 +4,8 @@ import NavBar from "../components/NavBar";
 export const AlbumDetails: React.FC = () => {
 
     useEffect(() => {
-        document.title = 'Album detailse';
+        document.title = 'Album details';
+        document.body.classList.remove("singleFormBody");
     }, []);
 
     return (

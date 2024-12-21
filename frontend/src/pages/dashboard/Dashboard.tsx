@@ -10,6 +10,7 @@ export const Dashboard: React.FC = () => {
 
     useEffect(() => {
         document.title = 'Dashboard';
+        document.body.classList.remove("singleFormBody");
         //console.log("Location State:", location);
         const userData = location.state?.userData;
         if (userData) {

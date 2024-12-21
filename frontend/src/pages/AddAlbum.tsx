@@ -5,6 +5,7 @@ export const AddAlbum: React.FC = () => {
 
     useEffect(() => {
         document.title = 'Add album';
+        document.body.classList.remove("singleFormBody");
     }, []);
 
     return (

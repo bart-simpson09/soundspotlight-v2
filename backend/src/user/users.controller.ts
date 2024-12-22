@@ -4,6 +4,7 @@ import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
 import {JwtService} from "../shared/jwt.service";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
+import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
 @Controller()
 export class UsersController {
@@ -14,6 +15,7 @@ export class UsersController {
     }
 
     @Post('/auth/login')
+    @AuthMetaData('SkipAuthorizationCheck')
     async login(@Res() response: Response, @Body() bodyRaw: object) {
         const parseSuccess = loginDtoSchema.safeParse(bodyRaw);
         if (!parseSuccess.success) {
@@ -45,6 +47,7 @@ export class UsersController {
     }
 
     @Post('/auth/register')
+    @AuthMetaData('SkipAuthorizationCheck')
     async register(@Res() response: Response, @Body() bodyRaw: object) {
         const parseResult = registerDtoSchema.safeParse(bodyRaw);
         if (!parseResult.success) {
@@ -79,6 +82,7 @@ export class UsersController {
     }
 
     @Post('/auth/logout')
+    @AuthMetaData('SkipAuthorizationCheck')
     async logout(@Res() response: Response) {
         response.clearCookie('jwt', {
             httpOnly: true,
@@ -86,22 +90,6 @@ export class UsersController {
         response.status(200).json({ message: 'Logged out successfully' });
         response.end();
     }
-
-    // @Get('/auth/check')
-    // async checkAuth(@Req() req: Request, @Res() res: Response) {
-    //     const token = req.cookies?.jwt;
-    //
-    //     if (!token) {
-    //         return res.status(200).json({ isAuthenticated: false });
-    //     }
-    //
-    //     try {
-    //         const payload = await this.jwtService.verify(token);
-    //         return res.status(200).json({ isAuthenticated: true, user: payload });
-    //     } catch (err) {
-    //         return res.status(200).json({ isAuthenticated: false });
-    //     }
-    // }
 
     @Get('/users/:id')
     async user(@Req() req: Request, @Res() res: Response) {

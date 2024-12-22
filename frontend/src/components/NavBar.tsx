@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import logo from "../assets/logo.svg";
 import { LogOut, MusicDoubleNote } from "iconoir-react";
 import defaultAvatar from "../assets/imgs/avatars/default-avatar.png";
@@ -14,14 +14,19 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
 
-    if (!user) {
-        navigate("/login");
-        return <></>;
-    }
+    useEffect(() => {
+        if (!user) {
+            navigate("/login");
+        }
+    }, [user, navigate]);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
+
+    if (!user) {
+        return <></>;
+    }
 
     return (
         <nav className={menuOpen ? "active" : ""}>

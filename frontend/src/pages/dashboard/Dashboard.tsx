@@ -31,8 +31,9 @@ export const Dashboard: React.FC = () => {
         <>
             <NavBar highlighted="home" />
             <p>
-                {authors?.length.toString()}
+                {authors?.map(author => author.name).join(', ')}
             </p>
+
         </>
     );
 };

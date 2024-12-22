@@ -53,7 +53,7 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     });
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 401) {
+                        if (error.response?.status === 403) {
                             console.error('Unauthorized access. Redirecting to login or refreshing session.');
                             sessionManager.logout();
                         }
@@ -71,7 +71,7 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     });
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 401) {
+                        if (error.response?.status === 403) {
                             console.error('Unauthorized access. Redirecting to login or refreshing session.');
                             sessionManager.logout();
 
@@ -82,7 +82,5 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 }
             },
         }),
-
-
     }
 }

@@ -6,7 +6,7 @@ import {AlbumList, CompactDisc, Language, User} from "iconoir-react";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
-    const {authors, loading } = useDashboard();
+    const {languages, loading } = useDashboard();
 
 
     useEffect(() => {
@@ -31,9 +31,6 @@ export const Dashboard: React.FC = () => {
     return (
         <>
             <NavBar highlighted="home"/>
-            <p>
-                {authors?.map(author => author.name).join(', ')}
-            </p>
 
             <div className="globalPageContainer flexColumn">
                 <div className="flexColumn rowGap24">
@@ -79,10 +76,11 @@ export const Dashboard: React.FC = () => {
                                 <div className="customSelect">
                                     <select name="language" id="language">
                                         <option value="0">All languages</option>
-                                        {/*<?php foreach ($languages as $language): ?>*/}
-                                        {/*<option*/}
-                                        {/*    value="<?= $language->getLanguageId() ?>"><?= $language->getLanguageName() ?></option>*/}
-                                        {/*<?php endforeach; ?>*/}
+                                        {languages?.map(language => (
+                                            <option key={language.id} value={language.id}>
+                                                {language.name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <Language className={"inputIcon"} />

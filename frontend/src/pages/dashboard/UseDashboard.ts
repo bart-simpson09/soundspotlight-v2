@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { API } from '../../utils/api';
 import {useSessionManager} from "../../utils/sessionManager";
-import {Author} from "../../types/author";
+import {Language} from "../../types/language";
 
 export const useDashboard = () => {
-    const [authors, setAuthors] = useState<Author[] | undefined>(undefined);
+    const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
@@ -15,13 +15,13 @@ export const useDashboard = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await API(sessionManager).authors().get();
+            const response = await API(sessionManager).languages().get();
             setLoading(false);
             if( !response ) {
                 return;
             }
 
-            setAuthors(response.data);
+            setLanguages(response.data);
         } catch (error) {
             console.trace(error);
             setLoading(false);
@@ -31,5 +31,5 @@ export const useDashboard = () => {
     };
 
 
-    return {  authors, loading };
+    return {  languages, loading };
 };

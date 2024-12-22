@@ -26,12 +26,12 @@ export const useLogin = () => {
 
     useEffect(() => {
         if (logoutParam === 1) {
-            console.log("logged out");
-            // alert('You have been logged out');
             searchParams.delete('logout');
-            setSearchParams(searchParams); // Update the URL
+            setSearchParams(searchParams);
+        }
 
-
+        if (sessionManager.currentUser) {
+            navigate('/dashboard');
         }
     }, [logoutParam]);
 

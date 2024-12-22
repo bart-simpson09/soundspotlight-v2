@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { API, RegisterDto } from '../../utils/api';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {useSessionManager} from "../../utils/sessionManager";
 
 export const useRegister = () => {
@@ -8,6 +8,12 @@ export const useRegister = () => {
     const sessionManager = useSessionManager();
 
     const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (sessionManager.currentUser) {
+            navigate('/dashboard');
+        }
+    });
 
     const register = async (dto: RegisterDto) => {
         try {

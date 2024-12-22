@@ -1,20 +1,15 @@
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../auth/AuthController";
+import {useRegister} from "./UseRegister";
 
 export const Register: React.FC = () => {
-    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const { loading, register } = useRegister();
 
     useEffect(() => {
         document.body.classList.add('singleFormBody');
         document.title = 'Register';
-
-        if (isAuthenticated) {
-            navigate('/');
-        }
-    }, [isAuthenticated, navigate]);
+    }, [navigate]);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -76,7 +71,7 @@ export const Register: React.FC = () => {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         const errors: Record<string, string> = {};
 
@@ -90,32 +85,16 @@ export const Register: React.FC = () => {
         setValidationErrors(errors);
 
         if (Object.keys(errors).length === 0) {
-            const { repeatedPassword, ...formDataToSubmit } = formData;
-
-            axios.post('http://localhost:8080/auth/register', formDataToSubmit)
-                .then(response => {
-                    navigate('/login');
-                    alert("Registration successful! Now you can log in.");
-                })
-                .catch(error => {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 400) {
-                            const validationErrors = error.response.data.errors || [];
-                            const mappedErrors: Record<string, string> = {};
-                            validationErrors.forEach((err: { field: string; message: string }) => {
-                                mappedErrors[err.field] = err.message;
-                            });
-                            setValidationErrors(mappedErrors);
-                        } else if (error.response?.status === 409) {
-                            setValidationErrors({ email: "User with this email already exists" });
-                        } else {
-                            console.error("Unexpected error during registration:", error.response?.data || error.message);
-                        }
-                    } else {
-                        console.error("Error during registration:", error);
-                    }
-                });
-
+            const {repeatedPassword, ...formDataToSubmit} = formData;
+            const response = await register(formDataToSubmit);
+            if (response) {
+                if (response.errorField && response.message) {
+                    setValidationErrors((prevErrors) => ({
+                        ...prevErrors,
+                        [response.errorField]: response.message
+                    }));
+                }
+            }
         }
     };
 
@@ -156,7 +135,8 @@ export const Register: React.FC = () => {
                         {validationErrors.repeatedPassword && (<p className="errorMessageContainer">{validationErrors.repeatedPassword}</p>)}
                     </div>
                 </div>
-                <button type="submit" className="buttonPrimary">Sign up</button>
+                <button type="submit" className="buttonPrimary" disabled={loading}>{loading ? "Processing..." : "Sign up"}</button>
+
             </form>
             <div className="flexRow columnGap4 flexCenter formFooter">
                 <p>Already have an account?</p>

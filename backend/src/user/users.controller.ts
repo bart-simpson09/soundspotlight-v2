@@ -2,18 +2,18 @@ import {Body, Controller, Get, HttpException, Post, Req, Res} from '@nestjs/comm
 import {UsersService} from "./users.service";
 import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
-import {JwtService} from "../shared/jwt.service";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
+import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
 @Controller()
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService,
         ) {
     }
 
     @Post('/auth/login')
+    @AuthMetaData('SkipAuthorizationCheck')
     async login(@Res() response: Response, @Body() bodyRaw: object) {
         const parseSuccess = loginDtoSchema.safeParse(bodyRaw);
         if (!parseSuccess.success) {
@@ -27,25 +27,12 @@ export class UsersController {
             throw new HttpException('Invalid credentials', 401);
         }
 
-        const jwt = await this.jwtService.sign({
-            sub: user.id,
-            email: user.email,
-            role: user.role,
-        });
-
-        response.cookie('jwt', jwt, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 15,
-        });
-
-        delete user.password;
-
-        response.json(user);
-        response.end();
+        await this.usersService.createJWT(user, response);
     }
 
     @Post('/auth/register')
-    async register(@Body() bodyRaw: object) {
+    @AuthMetaData('SkipAuthorizationCheck')
+    async register(@Res() response: Response, @Body() bodyRaw: object) {
         const parseResult = registerDtoSchema.safeParse(bodyRaw);
         if (!parseResult.success) {
             const validationErrors = parseResult.error.errors.map(err => ({
@@ -61,11 +48,12 @@ export class UsersController {
         const dto: RegisterDto = parseResult.data;
 
         const user = await this.usersService.register(dto);
-        delete user.password;
-        return user;
+
+        await this.usersService.createJWT(user, response);
     }
 
     @Post('/auth/logout')
+    @AuthMetaData('SkipAuthorizationCheck')
     async logout(@Res() response: Response) {
         response.clearCookie('jwt', {
             httpOnly: true,
@@ -74,19 +62,21 @@ export class UsersController {
         response.end();
     }
 
-    @Get('/auth/check')
-    async checkAuth(@Req() req: Request, @Res() res: Response) {
-        const token = req.cookies?.jwt;
-
-        if (!token) {
-            return res.status(200).json({ isAuthenticated: false });
-        }
+    @Get('/users/:id')
+    async user(@Req() req: Request, @Res() res: Response) {
+        const userId = req.params.id;
 
         try {
-            const payload = await this.jwtService.verify(token);
-            return res.status(200).json({ isAuthenticated: true, user: payload });
+            const user = await this.usersService.getUserById(userId);
+            delete user.password;
+
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            return res.status(200).json(user);
         } catch (err) {
-            return res.status(200).json({ isAuthenticated: false });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 }

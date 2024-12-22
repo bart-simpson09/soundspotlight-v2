@@ -6,7 +6,7 @@ import {AlbumList, CompactDisc, Language, User} from "iconoir-react";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
-    const {languages, loading } = useDashboard();
+    const {languages, categories, loading } = useDashboard();
 
 
     useEffect(() => {
@@ -60,10 +60,11 @@ export const Dashboard: React.FC = () => {
                                 <div className="customSelect">
                                     <select name="category" id="category">
                                         <option value="0">All categories</option>
-                                        {/*<?php foreach ($categories as $category): ?>*/}
-                                        {/*<option*/}
-                                        {/*    value="<?= $category->getCategoryId() ?>"><?= $category->getCategoryName() ?></option>*/}
-                                        {/*<?php endforeach; ?>*/}
+                                        {categories?.map(category => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <AlbumList className={"inputIcon"} />

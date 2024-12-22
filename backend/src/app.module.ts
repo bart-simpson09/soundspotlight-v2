@@ -11,6 +11,7 @@ import {Review} from "./entities/review.entity";
 import {Favorite} from "./entities/favorite.entity";
 import {AuthorsModule} from "./author/author.module";
 import {LanguagesModule} from "./language/language.module";
+import {CategoriesModule} from "./category/category.module";
 
 
 @Module({
@@ -31,7 +32,7 @@ import {LanguagesModule} from "./language/language.module";
                 logging: true,
             })
         }),
-        UserModule, AuthorsModule, LanguagesModule,
+        UserModule, AuthorsModule, LanguagesModule, CategoriesModule,
     ],
 })
 export class AppModule {

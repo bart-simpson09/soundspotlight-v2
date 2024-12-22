@@ -3,6 +3,7 @@ import {User} from '../types';
 import {useSessionManager} from "./sessionManager";
 import {Author} from "../types/author";
 import {Language} from "../types/language";
+import {Category} from "../types/category";
 
 export interface RegisterDto {
     email: string;
@@ -88,6 +89,26 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
             get: async () => {
                 try {
                     return await client<Language[]>(`/languages/`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        }
+                    }
+                    throw error;
+                }
+            },
+        }),
+
+        categories: () => ({
+            get: async () => {
+                try {
+                    return await client<Category[]>(`/categories/`, {
                         method: 'GET',
                     });
                 } catch (error) {

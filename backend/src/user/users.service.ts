@@ -5,12 +5,15 @@ import * as bcrypt from 'bcrypt';
 import {User} from "../entities/user.entity";
 import {RegisterDto} from "./dtos/registerDtoSchema";
 import {LoginDto} from "./dtos/loginDtoSchema";
+import {JwtService} from "../shared/jwt.service";
+import { Response } from 'express';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
+        private readonly jwtService: JwtService,
     ) {
     }
 
@@ -45,6 +48,23 @@ export class UsersService {
             lastName: dto.lastName,
             avatar: 'https://avatars.dicebear.com/api/human/john-doe.svg',
         })
+    }
+
+    async createJWT(user: User, response: Response) {
+        const jwt = await this.jwtService.sign({
+            sub: user.id,
+            email: user.email,
+            role: user.role,
+        });
+
+        response.cookie('jwt', jwt, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 15,
+        });
+
+        delete user.password;
+        response.json(user);
+        response.end();
     }
 
     async getUserById(id: string) {

@@ -2,7 +2,6 @@ import {Body, Controller, Get, HttpException, Post, Req, Res} from '@nestjs/comm
 import {UsersService} from "./users.service";
 import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
-import {JwtService} from "../shared/jwt.service";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
@@ -10,7 +9,6 @@ import {AuthMetaData} from "../guards/auth.metadata.decorator";
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService,
         ) {
     }
 
@@ -29,21 +27,7 @@ export class UsersController {
             throw new HttpException('Invalid credentials', 401);
         }
 
-        const jwt = await this.jwtService.sign({
-            sub: user.id,
-            email: user.email,
-            role: user.role,
-        });
-
-        response.cookie('jwt', jwt, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 15,
-        });
-
-        delete user.password;
-
-        response.json(user);
-        response.end();
+        await this.usersService.createJWT(user, response);
     }
 
     @Post('/auth/register')
@@ -65,20 +49,7 @@ export class UsersController {
 
         const user = await this.usersService.register(dto);
 
-        const jwt = await this.jwtService.sign({
-            sub: user.id,
-            email: user.email,
-            role: user.role,
-        });
-
-        response.cookie('jwt', jwt, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 15,
-        });
-        delete user.password;
-
-        response.json(user);
-        response.end();
+        await this.usersService.createJWT(user, response);
     }
 
     @Post('/auth/logout')

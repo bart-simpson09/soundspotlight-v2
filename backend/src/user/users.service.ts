@@ -1,4 +1,4 @@
-import {HttpException, Injectable} from '@nestjs/common';
+import {HttpException, Injectable, StreamableFile} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -6,7 +6,8 @@ import {User} from "../entities/user.entity";
 import {RegisterDto} from "./dtos/registerDtoSchema";
 import {LoginDto} from "./dtos/loginDtoSchema";
 import {JwtService} from "../shared/jwt.service";
-import { Response } from 'express';
+import {Response} from 'express';
+import {ImageService} from "../shared/image.service";
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,7 @@ export class UsersService {
         @InjectRepository(User)
         private usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
+        private readonly imageService: ImageService,
     ) {
     }
 
@@ -46,7 +48,7 @@ export class UsersService {
             password: hash,
             firstName: dto.firstName,
             lastName: dto.lastName,
-            avatar: 'https://avatars.dicebear.com/api/human/john-doe.svg',
+            avatar: '../src/assets/avatars/default-avatar.png',
         })
     }
 
@@ -69,5 +71,15 @@ export class UsersService {
 
     async getUserById(id: string) {
         return await this.usersRepository.findOneBy({id: id});
+    }
+
+    async getUserAvatar(id: string): Promise<StreamableFile> {
+        const user = await this.usersRepository.findOneBy({ id: id });
+
+        if (!user) {
+            throw new HttpException('User not found', 404);
+        }
+
+        return this.imageService.getImage(user.avatar);
     }
 }

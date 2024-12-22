@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import logo from "../assets/logo.svg";
 import { LogOut, MusicDoubleNote } from "iconoir-react";
-import defaultAvatar from "../assets/imgs/avatars/default-avatar.png";
 import { useNavigate } from "react-router-dom";
 import { UseNavBar } from "./UseNavBar";
 
@@ -51,7 +50,7 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
                     <span className={"menuDivider"}></span>
                     <div className={"userInfo flexRow columnGap16"}>
                         <a href="./myProfile" className={"profile flexRow columnGap8"}>
-                            <img className={"standardAvatar"} src={defaultAvatar} alt="User avatar" />
+                            <img className={"standardAvatar"} src={user.avatar} alt="User avatar" />
                             <p className={"fontMedium"}>{user.firstName + ' ' + user.lastName}</p>
                         </a>
                         <button className={"flexRow"} onClick={logout} type="button">

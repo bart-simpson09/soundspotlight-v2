@@ -27,6 +27,8 @@ export class UsersController {
             throw new HttpException('Invalid credentials', 401);
         }
 
+        delete user.avatar;
+
         await this.usersService.createJWT(user, response);
     }
 
@@ -48,6 +50,7 @@ export class UsersController {
         const dto: RegisterDto = parseResult.data;
 
         const user = await this.usersService.register(dto);
+        delete user.avatar;
 
         await this.usersService.createJWT(user, response);
     }
@@ -68,10 +71,24 @@ export class UsersController {
 
         try {
             const user = await this.usersService.getUserById(userId);
-            delete user.password;
 
             if (!user) {
                 return res.status(404).json({ message: "User not found" });
+            }
+
+            delete user.password;
+
+            try {
+                const avatarFile = await this.usersService.getUserAvatar(userId);
+                const chunks = [];
+                for await (const chunk of avatarFile.getStream()) {
+                    chunks.push(chunk);
+                }
+                const buffer = Buffer.concat(chunks);
+                const avatarBase64 = buffer.toString('base64');
+                user.avatar = `data:image/png;base64,${avatarBase64}`;
+            } catch (avatarErr) {
+                user.avatar = null;
             }
 
             return res.status(200).json(user);

@@ -9,12 +9,12 @@ export interface Album {
     numberOfSongs: number;
     description: string;
     avgRate: number;
-    coverImageUrl: string;
+    coverImageURL: string;
     releaseDate: Date;
     uploadDate: Date;
-    authorId: Author;
-    languageId: Language;
-    categoryId: Category;
+    author: Author;
+    language: Language;
+    category: Category;
     status: string;
-    addedById: User;
+    addedBy: User;
 }

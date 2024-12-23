@@ -14,11 +14,16 @@ export class AlbumsService {
     }
 
     async getAllAlbums() {
-        return await this.albumsRepository.find();
+        return await this.albumsRepository.find({
+            relations: ['author', 'language', 'category'],
+        });
     }
 
     async getAlbumById(id: string) {
-        return await this.albumsRepository.findOneBy({id: id});
+        return await this.albumsRepository.findOne({
+            where: { id: id },
+            relations: ['author', 'language', 'category']
+        });
     }
 
     async getAlbumCover(id: string): Promise<StreamableFile> {

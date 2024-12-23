@@ -13,6 +13,22 @@ export class AlbumsController {
         try {
             try {
                 const albums = await this.albumsService.getAllAlbums();
+
+                for (const album of albums) {
+                    try {
+                        const coverFile = await this.albumsService.getAlbumCover(album.id);
+                        const chunks = [];
+                        for await (const chunk of coverFile.getStream()) {
+                            chunks.push(chunk);
+                        }
+                        const buffer = Buffer.concat(chunks);
+                        const coverBase64 = buffer.toString('base64');
+                        album.coverImageURL = `data:image/png;base64,${coverBase64}`;
+                    } catch (avatarErr) {
+                        album.coverImageURL = null;
+                    }
+                }
+
                 return res.status(200).json(albums);
 
             } catch (err) {

@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { API } from '../../utils/api';
 import {useSessionManager} from "../../utils/sessionManager";
-import {Author} from "../../types/author";
+import {Language} from "../../types/language";
+import {Category} from "../../types/category";
+import {Album} from "../../types/album";
 
 export const useDashboard = () => {
-    const [authors, setAuthors] = useState<Author[] | undefined>(undefined);
+    const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
+    const [categories, setCategories] = useState<Category[] | undefined>(undefined);
+    const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
@@ -15,21 +19,47 @@ export const useDashboard = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await API(sessionManager).authors().get();
+            const responseLanguages = await API(sessionManager).languages().get();
+            const responseCategories = await API(sessionManager).categories().get();
+            const responseAlbums = await API(sessionManager).albums().getByParams("published");
             setLoading(false);
-            if( !response ) {
+
+            if( !responseLanguages || !responseCategories || !responseAlbums ) {
                 return;
             }
 
-            setAuthors(response.data);
+            setLanguages(responseLanguages.data);
+            setCategories(responseCategories.data);
+            setAlbums(responseAlbums.data);
         } catch (error) {
             console.trace(error);
             setLoading(false);
 
-            alert('Failed to fetch books.');
+            alert('Failed to fetch data.');
         }
     };
 
+    const searchAlbums = async (title?: string, author?: string, category?: string, language?: string) => {
+        try {
+            setLoading(true);
+            const searchedAlbums = await API(sessionManager).albums().getByParams("published", {
+                title,
+                author,
+                category,
+                language
+            });
 
-    return {  authors, loading };
+            setLoading(false);
+
+            if (searchedAlbums) {
+                return searchedAlbums.data;
+            }
+        } catch (error) {
+            console.trace(error);
+            setLoading(false);
+            alert('Failed to fetch data.');
+        }
+    };
+
+    return {  languages, categories, albums, loading, searchAlbums, fetchData };
 };

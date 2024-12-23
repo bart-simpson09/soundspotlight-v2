@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/navBar/NavBar";
 
 export const AdminConsole: React.FC = () => {
 

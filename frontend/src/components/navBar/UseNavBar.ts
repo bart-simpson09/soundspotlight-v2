@@ -1,4 +1,4 @@
-import {useSessionManager} from "../utils/sessionManager";
+import {useSessionManager} from "../../utils/sessionManager";
 
 export const UseNavBar = () => {
     const sessionManager = useSessionManager();

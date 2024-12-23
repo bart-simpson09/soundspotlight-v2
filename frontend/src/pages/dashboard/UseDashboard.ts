@@ -21,7 +21,7 @@ export const useDashboard = () => {
             setLoading(true);
             const responseLanguages = await API(sessionManager).languages().get();
             const responseCategories = await API(sessionManager).categories().get();
-            const responseAlbums = await API(sessionManager).albums().get();
+            const responseAlbums = await API(sessionManager).albums().getPublished();
             setLoading(false);
 
             if( !responseLanguages || !responseCategories || !responseAlbums ) {

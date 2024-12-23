@@ -127,9 +127,9 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
         }),
 
         albums: () => ({
-            get: async () => {
+            getPublished: async () => {
                 try {
-                    return await client<Album[]>(`/albums/`, {
+                    return await client<Album[]>(`/albums/?status=published`, {
                         method: 'GET',
                     });
                 } catch (error) {

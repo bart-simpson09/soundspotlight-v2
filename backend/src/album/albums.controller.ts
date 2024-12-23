@@ -1,4 +1,4 @@
-import {Controller, Get, Req, Res} from '@nestjs/common';
+import {Controller, Get, Query, Req, Res} from '@nestjs/common';
 import {Request, Response} from "express";
 import {AlbumsService} from "./albums.service";
 
@@ -9,10 +9,15 @@ export class AlbumsController {
     ) {}
 
     @Get('/albums/')
-    async albums(@Res() res: Response) {
+    async albums(@Res() res: Response, @Query('status') status?: string) {
         try {
             try {
-                const albums = await this.albumsService.getAllAlbums();
+                const validStatuses = ['published', 'pending'];
+                let albums;
+
+                if (status && validStatuses.includes(status)) {
+                    albums = await this.albumsService.getAlbumsByStatus(status);
+                }
 
                 for (const album of albums) {
                     try {

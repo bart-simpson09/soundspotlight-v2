@@ -11,7 +11,7 @@ export class CategoriesService {
     ) {
     }
 
-    async getAllCategoriess() {
+    async getAllCategories() {
         return await this.categoriesRepository.find();
     }
 }

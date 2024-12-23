@@ -12,7 +12,7 @@ export class CategoriesController {
     async categories(@Res() res: Response) {
         try {
             try {
-                const categories = await this.categoriesService.getAllCategoriess();
+                const categories = await this.categoriesService.getAllCategories();
                 return res.status(200).json(categories);
 
             } catch (err) {

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import logo from "../assets/logo.svg";
+import logo from "../../assets/logo.svg";
 import { LogOut, MusicDoubleNote } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 import { UseNavBar } from "./UseNavBar";
@@ -29,7 +29,7 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
 
     return (
         <nav className={menuOpen ? "active" : ""}>
-            <a href="/"><img src={logo} alt="SoundSpotlight Logo" /></a>
+            <a href="/frontend/public"><img src={logo} alt="SoundSpotlight Logo" /></a>
 
             <div className={`menuArea flexRow ${menuOpen ? "active" : ""}`}>
                 <div className={"menuOptions flexRow columnGap32"}>

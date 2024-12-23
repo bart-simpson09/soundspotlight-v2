@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import NavBar from "../../components/NavBar";
+import NavBar from "../../components/navBar/NavBar";
 import { useLocation } from "react-router-dom";
 import {useDashboard} from "./UseDashboard";
 import {AlbumList, CompactDisc, Language, User} from "iconoir-react";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
-    const {languages, categories, loading } = useDashboard();
+    const {languages, categories, albums, loading } = useDashboard();
 
 
     useEffect(() => {
@@ -42,7 +42,7 @@ export const Dashboard: React.FC = () => {
                             <label htmlFor="albumTitle">Album title</label>
                             <div className="inputWithIcon">
                                 <input type="text" name="albumTitle" id="albumTitle" placeholder="Type album title"/>
-                                <CompactDisc className={"inputIcon"} />
+                                <CompactDisc className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -50,7 +50,7 @@ export const Dashboard: React.FC = () => {
                             <label htmlFor="artistName">Artist name</label>
                             <div className="inputWithIcon">
                                 <input type="text" name="artistName" id="artistName" placeholder="Type artist name"/>
-                                <User className={"inputIcon"} />
+                                <User className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -67,7 +67,7 @@ export const Dashboard: React.FC = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <AlbumList className={"inputIcon"} />
+                                <AlbumList className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -84,12 +84,56 @@ export const Dashboard: React.FC = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <Language className={"inputIcon"} />
+                                <Language className={"inputIcon"}/>
                             </div>
                         </div>
 
                         <button className="buttonPrimary" id="searchButton">Search albums</button>
                     </div>
+                </div>
+
+                {albums?.map(album => (
+                    <p>{album.albumTitle}</p>
+                ))}
+
+                <div className="albumsList">
+                    <div className="albumItemContainer">
+                        <a href="#" className="albumItem flexColumn rowGap24">
+                            <div className="albumItemCoverArea">
+                                <img className="albumItemCover" src="#"
+                                     alt="Album-Cover"/>
+                            </div>
+                            <div className="albumItemContent flexColumn rowGap24">
+                                <div className="flexColumn rowGap4">
+                                    <h3>title</h3>
+                                    <p>author</p>
+                                </div>
+                                <div className="flexColumn rowGap8">
+                                    <div className="flexRow columnGap8">
+                                        <p className="albumItemDetailLabel">Release date</p>
+                                        <p className="albumItemDetailText">test</p>
+                                    </div>
+                                    <div className="flexRow columnGap8">
+                                        <p className="albumItemDetailLabel">Rate</p>
+                                        <p className="albumItemDetailText">test</p>
+                                    </div>
+                                    <div className="flexRow columnGap8">
+                                        <p className="albumItemDetailLabel">Category</p>
+                                        <p className="albumItemDetailText">test</p>
+                                    </div>
+                                    <div className="flexRow columnGap8">
+                                        <p className="albumItemDetailLabel">Language</p>
+                                        <p className="albumItemDetailText">test</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div className="favouriteButtonDefault flexCenter favoriteButton">
+
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
 

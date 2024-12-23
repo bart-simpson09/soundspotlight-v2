@@ -1,7 +1,7 @@
 import {HttpException, Injectable, StreamableFile} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {Album, AlbumStatus} from "../entities/album.entity";
+import {Album} from "../entities/album.entity";
 import {ImageService} from "../shared/image.service";
 
 @Injectable()
@@ -13,12 +13,38 @@ export class AlbumsService {
     ) {
     }
 
-    async getAlbumsByStatus(status: string) {
-        return await this.albumsRepository.find({
-            where: { status: status as AlbumStatus },
-            relations: ['author', 'language', 'category', 'addedBy'],
-        });
+    async getAlbumsByParams(params: {
+        status: string;
+        title?: string;
+        author?: string;
+        category?: string;
+        language?: string;
+    }) {
+        const query = this.albumsRepository
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
+            .where('album.status = :status', { status: params.status });
+
+        if (params.title) {
+            query.andWhere('LOWER(album.albumTitle) LIKE LOWER(:title)', { title: `%${params.title}%` });
+        }
+        if (params.author) {
+            query.andWhere('LOWER(author.id) LIKE LOWER(:author)', { author: `%${params.author}%` });
+        }
+        if (params.category) {
+            query.andWhere('category.id = :category', { category: params.category });
+        }
+        if (params.language) {
+            query.andWhere('language.id = :language', { language: params.language });
+        }
+
+        return await query.getMany();
     }
+
+
 
     async getAlbumById(id: string) {
         return await this.albumsRepository.findOne({

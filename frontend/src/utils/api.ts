@@ -127,9 +127,21 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
         }),
 
         albums: () => ({
-            getPublished: async () => {
+            getByParams: async (status: string, params?: { title?: string; author?: string; category?: string; language?: string }) => {
                 try {
-                    return await client<Album[]>(`/albums/?status=published`, {
+                    const queryParams = new URLSearchParams({ status });
+
+                    if (params) {
+                        Object.entries(params).forEach(([key, value]) => {
+                            if (value) {
+                                queryParams.append(key, value);
+                            }
+                        });
+                    }
+
+                    const queryString = queryParams.toString();
+
+                    return await client<Album[]>(`/albums/?${queryString}`, {
                         method: 'GET',
                     });
                 } catch (error) {

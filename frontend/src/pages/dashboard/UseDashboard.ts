@@ -21,7 +21,7 @@ export const useDashboard = () => {
             setLoading(true);
             const responseLanguages = await API(sessionManager).languages().get();
             const responseCategories = await API(sessionManager).categories().get();
-            const responseAlbums = await API(sessionManager).albums().getPublished();
+            const responseAlbums = await API(sessionManager).albums().getByParams("published");
             setLoading(false);
 
             if( !responseLanguages || !responseCategories || !responseAlbums ) {
@@ -39,6 +39,27 @@ export const useDashboard = () => {
         }
     };
 
+    const searchAlbums = async (title?: string, author?: string, category?: string, language?: string) => {
+        try {
+            setLoading(true);
+            const searchedAlbums = await API(sessionManager).albums().getByParams("published", {
+                title,
+                author,
+                category,
+                language
+            });
 
-    return {  languages, categories, albums, loading };
+            setLoading(false);
+
+            if (searchedAlbums) {
+                return searchedAlbums.data;
+            }
+        } catch (error) {
+            console.trace(error);
+            setLoading(false);
+            alert('Failed to fetch data.');
+        }
+    };
+
+    return {  languages, categories, albums, loading, searchAlbums, fetchData };
 };

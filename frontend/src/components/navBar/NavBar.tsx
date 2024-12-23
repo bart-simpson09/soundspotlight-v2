@@ -29,7 +29,7 @@ const NavBar: React.FC<NavBarProps> = ({ highlighted }) => {
 
     return (
         <nav className={menuOpen ? "active" : ""}>
-            <a href="/frontend/public"><img src={logo} alt="SoundSpotlight Logo" /></a>
+            <a href="/dashboard"><img src={logo} alt="SoundSpotlight Logo" /></a>
 
             <div className={`menuArea flexRow ${menuOpen ? "active" : ""}`}>
                 <div className={"menuOptions flexRow columnGap32"}>

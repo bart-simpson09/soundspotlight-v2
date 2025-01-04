@@ -1,6 +1,9 @@
-import {Controller, Get, Query, Req, Res} from '@nestjs/common';
+import {Body, Controller, Get, Post, Query, Req, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
 import {Request, Response} from "express";
 import {AlbumsService} from "./albums.service";
+import {FileInterceptor} from "@nestjs/platform-express";
+import {AlbumDto} from "./dtos/albumDtoSchema";
+import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
 @Controller()
 export class AlbumsController {
@@ -82,5 +85,15 @@ export class AlbumsController {
         } catch (err) {
             return res.status(500).json({ message: 'Internal server error' });
         }
+    }
+
+    @Post('/albums/add')
+    @AuthMetaData('SkipAuthorizationCheck')
+    @UseInterceptors(FileInterceptor('albumCover'))
+    async addAlbum(
+        @Body() albumDto: AlbumDto,
+        @UploadedFile() albumCover: Express.Multer.File
+    ) {
+        return this.albumsService.addAlbum(albumDto, albumCover);
     }
 }

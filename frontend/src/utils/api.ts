@@ -156,6 +156,14 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     throw error;
                 }
             },
+
+            add: async (data: FormData) => {
+                return client.post('/albums/', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+            },
         }),
     }
 }

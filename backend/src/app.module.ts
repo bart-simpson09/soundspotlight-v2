@@ -33,7 +33,7 @@ import {AlbumsModule} from "./album/album.module";
                 logging: true,
             })
         }),
-        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule,
+        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule
     ],
 })
 export class AppModule {

@@ -34,6 +34,14 @@ services:
       - '8080:3000'
     volumes:
       - ./assets:/usr/src/app/src/assets
+    develop:
+      watch:
+        - action: sync
+          path: src
+          target: /usr/src/app/src
+        - action: rebuild
+          path: package.json
+          target: /usr/src/app/src/package.json
     environment:
       POSTGRES_HOST: database
     env_file:

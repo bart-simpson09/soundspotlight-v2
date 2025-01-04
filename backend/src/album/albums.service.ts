@@ -5,13 +5,18 @@ import {Album, AlbumStatus} from "../entities/album.entity";
 import {ImageService} from "../shared/image.service";
 import {AlbumDto} from "./dtos/albumDtoSchema";
 import * as fs from "node:fs";
+import {Author} from "../entities/author.entity";
+import {AuthorsService} from "../author/authors.service";
 
 @Injectable()
 export class AlbumsService {
     constructor(
         @InjectRepository(Album)
         private albumsRepository: Repository<Album>,
+        @InjectRepository(Author)
+        private authorsRepository: Repository<Author>,
         private readonly imageService: ImageService,
+        private authorsService: AuthorsService,
     ) {
     }
 
@@ -65,15 +70,25 @@ export class AlbumsService {
 
     async addAlbum(dto: AlbumDto, coverFile: Express.Multer.File) {
         const existingAlbum = await this.albumsRepository.findOneBy({ albumTitle: dto.title });
+        const existingAuthor = await this.authorsRepository.findOneBy({name: dto.author});
+        let authorID;
 
         if (existingAlbum) {
             fs.unlinkSync(coverFile.path);
             throw new HttpException('Album with this title already exists', 409);
         }
 
+        if (existingAuthor) {
+            authorID = existingAuthor.id;
+        } else {
+            await this.authorsService.addAuthor(dto.author);
+            const newAuthor = await this.authorsRepository.findOneBy({name: dto.author});
+            authorID = newAuthor.id;
+        }
+
         return this.albumsRepository.save({
             albumTitle: dto.title,
-            author: { id: dto.author },
+            author: { id: authorID },
             language: { id: dto.language },
             category: { id: dto.category },
             numberOfSongs: dto.numberOfSongs,

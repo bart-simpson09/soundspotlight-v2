@@ -68,10 +68,14 @@ export class AlbumsService {
         return this.imageService.getImage(album.coverImageURL);
     }
 
-    async addAlbum(dto: AlbumDto, coverFile: Express.Multer.File) {
+    async addAlbum(dto: AlbumDto, coverFile: Express.Multer.File, currentUserId: string) {
         const existingAlbum = await this.albumsRepository.findOneBy({ albumTitle: dto.title });
         const existingAuthor = await this.authorsRepository.findOneBy({name: dto.author});
-        let authorID;
+        let authorID: string;
+
+        console.log("-----START------");
+        console.log(dto);
+        console.log("-----KONIEC------");
 
         if (existingAlbum) {
             fs.unlinkSync(coverFile.path);
@@ -96,6 +100,7 @@ export class AlbumsService {
             coverImageURL: "../src/assets/covers/" + coverFile.filename,
             releaseDate: dto.releaseDate,
             status: AlbumStatus.pending,
+            addedBy: {id: currentUserId}
         });
     }
 

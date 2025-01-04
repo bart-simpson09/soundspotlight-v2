@@ -92,8 +92,10 @@ export class AlbumsController {
     @UseInterceptors(FileInterceptor('albumCover'))
     async addAlbum(
         @Body() albumDto: AlbumDto,
-        @UploadedFile() albumCover: Express.Multer.File
+        @UploadedFile() albumCover: Express.Multer.File,
+        @Req() req: Request
     ) {
-        return this.albumsService.addAlbum(albumDto, albumCover);
+        const currentUserId = req.headers['current_user_id'].toString();
+        return this.albumsService.addAlbum(albumDto, albumCover, currentUserId);
     }
 }

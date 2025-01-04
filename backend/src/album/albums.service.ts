@@ -39,7 +39,7 @@ export class AlbumsService {
             query.andWhere('LOWER(album.albumTitle) LIKE LOWER(:title)', { title: `%${params.title}%` });
         }
         if (params.author) {
-            query.andWhere('LOWER(author.id) LIKE LOWER(:author)', { author: `%${params.author}%` });
+            query.andWhere('LOWER(author.name) LIKE LOWER(:author)', { author: `%${params.author}%` });
         }
         if (params.category) {
             query.andWhere('category.id = :category', { category: params.category });

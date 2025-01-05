@@ -40,7 +40,7 @@ export class Album {
     @Column({name: 'description', type: 'text'})
     description: string;
 
-    @Column({name: 'avg_rate', type: 'double precision'})
+    @Column({ type: 'double precision', default: () => '0' })
     avgRate: number;
 
     @Column({name: 'cover_image_url'})

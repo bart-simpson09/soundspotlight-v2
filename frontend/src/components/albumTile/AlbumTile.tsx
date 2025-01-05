@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Heart} from "iconoir-react";
-import { useNavigate } from "react-router-dom";
 
 interface AlbumTileProps {
     id: string;
@@ -11,14 +10,14 @@ interface AlbumTileProps {
     rate: number;
     category: string;
     language: string;
+    onClick?: () => void;
 }
 
-const AlbumTile: React.FC<AlbumTileProps> = ({id, coverImage, title, author, releaseDate, rate, category, language }) => {
-    const navigate = useNavigate();
+const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, releaseDate, rate, category, language, onClick }) => {
 
     return (
-        <div className="albumItemContainer">
-        <a href="#" className="albumItem flexColumn rowGap24">
+        <div className="albumItemContainer" onClick={onClick}>
+        <a className="albumItem flexColumn rowGap24">
             <div className="albumItemCoverArea">
                 <img className="albumItemCover" src={coverImage} alt="Album-Cover"/>
             </div>

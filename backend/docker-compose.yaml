@@ -32,6 +32,8 @@ services:
     command: npm run start:dev
     ports:
       - '8080:3000'
+    volumes:
+      - ./assets:/usr/src/app/src/assets
     develop:
       watch:
         - action: sync

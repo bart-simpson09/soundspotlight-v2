@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navBar/NavBar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDashboard } from "./UseDashboard";
 import { AlbumList, CompactDisc, Language, User } from "iconoir-react";
 import AlbumTile from "../../components/albumTile/AlbumTile";
@@ -9,6 +9,7 @@ import {Album} from "../../types/album";
 export const Dashboard: React.FC = () => {
     let location = useLocation();
     const { albums, languages, categories, loading, searchAlbums, fetchData } = useDashboard();
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState<string>('');
     const [author, setAuthor] = useState<string>('');
@@ -38,6 +39,10 @@ export const Dashboard: React.FC = () => {
             );
             setAlbums(searchedAlbums || []);
         }
+    };
+
+    const handleAlbumClick = (id: string) => {
+        navigate(`/albumDetails/${id}`);
     };
 
     if (loading) {
@@ -150,6 +155,7 @@ export const Dashboard: React.FC = () => {
                             rate={album.avgRate}
                             category={album.category.name}
                             language={album.language.name}
+                            onClick={() => handleAlbumClick(album.id)}
                         />
                     ))}
                 </div>

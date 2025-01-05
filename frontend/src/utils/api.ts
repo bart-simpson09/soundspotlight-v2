@@ -168,6 +168,27 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 }
             },
 
+            getByID: async (id: string) => {
+                    try {
+                        return await client<Album>(`/albums/${id}`, {
+                            method: 'GET',
+                        });
+                    } catch (error) {
+                        if (axios.isAxiosError(error)) {
+                            if (error.response?.status === 403) {
+                                console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                                sessionManager.logout();
+
+                                return null;
+                            } else if (error.response?.status === 404) {
+                                console.error(`Error: ${error.response.data.message}`);
+                            }
+                        }
+
+                        throw error;
+                    }
+            },
+
             add: async (data: FormData) => {
                 const currentUserId = sessionStorage.getItem('current_user_id');
 

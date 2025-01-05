@@ -58,15 +58,12 @@ export class AlbumsController {
 
 
     @Get('/albums/:id')
+    @AuthMetaData('SkipAuthorizationCheck')
     async album(@Req() req: Request, @Res() res: Response) {
         const albumId = req.params.id;
 
         try {
             const album = await this.albumsService.getAlbumById(albumId);
-
-            if (!album) {
-                return res.status(404).json({ message: "Album not found" });
-            }
 
             try {
                 const coverFile = await this.albumsService.getAlbumCover(albumId);
@@ -83,7 +80,7 @@ export class AlbumsController {
 
             return res.status(200).json(album);
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(404).json({ message: "Album not found" });
         }
     }
 

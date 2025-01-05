@@ -9,6 +9,9 @@ export const YourFavorites: React.FC = () => {
     }, []);
 
     return (
-        <NavBar highlighted="yourFavorites" />
+        <div>
+            <NavBar highlighted="yourFavorites" />
+            <h1>test</h1>
+        </div>
     );
 };

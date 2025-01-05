@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API } from '../../utils/api';
+import {API} from '../../utils/api';
 import {useSessionManager} from "../../utils/sessionManager";
 import {Language} from "../../types/language";
 import {Category} from "../../types/category";
@@ -35,5 +35,16 @@ export const useAddAlbum = () => {
         }
     };
 
-    return {  languages, categories, loading };
+    const addAlbum = async (formData: FormData) => {
+        try {
+            setLoading(true);
+            await API(sessionManager).albums().add(formData);
+            setLoading(false);
+            alert("Album added and sent to review!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    return {  languages, categories, loading, addAlbum };
 };

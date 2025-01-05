@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
 import {useAddAlbum} from "./UseAddAlbum";
+import defaultCover from "../../assets/default-cover.png";
 
 export const AddAlbum: React.FC = () => {
 
-    const { languages, categories, loading } = useAddAlbum();
-    //const [cover, setCover] = useState<Image>('');
+    const { languages, categories, addAlbum } = useAddAlbum();
     const [title, setTitle] = useState<string>('');
     const [author, setAuthor] = useState<string>('');
     const [language, setLanguage] = useState<string>('');
@@ -13,27 +13,86 @@ export const AddAlbum: React.FC = () => {
     const [releaseDate, setReleaseDate] = useState<string>('');
     const [numberOfSongs, setNumberOfSongs] = useState<number>();
     const [description, setDescription] = useState<string>('');
+    const [albumCover, setAlbumCover] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
 
     useEffect(() => {
         document.title = 'Add album';
         document.body.classList.remove("singleFormBody");
-    }, []);
+
+        if (languages && languages.length > 0) {
+            setLanguage(languages[0].id);
+        }
+        if (categories && categories.length > 0) {
+            setCategory(categories[0].id);
+        }
+
+    }, [languages, categories]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setAlbumCover(file);
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setPreview(null);
+        }
+    };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        if (!numberOfSongs || numberOfSongs <= 0) {
+            alert("Number of songs must be greater than 0");
+            return;
+        }
+
+        const formData = new FormData();
+        if (albumCover) {
+            formData.append("albumCover", albumCover);
+        }
+        formData.append("title", title);
+        formData.append("author", author);
+        formData.append("language", language);
+        formData.append("category", category);
+        formData.append("releaseDate", releaseDate);
+        formData.append("numberOfSongs", numberOfSongs?.toString() || '');
+        formData.append("description", description);
+
+        await addAlbum(formData);
+
+        setTitle('');
+        setAuthor('');
+        setLanguage(languages?.[0]?.id || '');
+        setCategory(categories?.[0]?.id || '');
+        setReleaseDate('');
+        setNumberOfSongs(0);
+        setDescription('');
+        setAlbumCover(null);
+        setPreview(null);
+    };
 
     return (
         <>
         <NavBar highlighted="none" />
         <div className="globalPageContainer flexColumn rowGap32 narrowPageContainer">
             <h1>Add new album</h1>
-            <form id="addAlbumForm" action="addAlbum" className="flexColumn rowGap32" method="POST"
+            <form id="addAlbumForm" onSubmit={handleSubmit} className="flexColumn rowGap32" method="POST"
                   encType="multipart/form-data">
                 <div className="flexRow columnGap24">
-                    <img id="uploadedCoverPreview" className="myProfileAvatar" src="/public/assets/default-cover.png"
+                    <img id="uploadedCoverPreview" className="myProfileAvatar" src={preview || defaultCover}
                          alt=""/>
-                    <input type="file" id="photoInput" name="albumCover" accept="image/png, image/jpeg" required/>
+                    <input type="file" onChange={handleFileChange} id="photoInput"
+                           name="albumCover" accept="image/png, image/jpeg" required/>
                 </div>
                 <div className="flexColumn rowGap16">
                     <div className="flexRow columnGap16 rowGap16 mobileWrapped">
-                        <div className="inputArea flexColumn rowGap8">
+                    <div className="inputArea flexColumn rowGap8">
                             <label htmlFor="albumTitle">Album title</label>
                             <input type="text"
                                    name="albumTitle"
@@ -107,6 +166,7 @@ export const AddAlbum: React.FC = () => {
                                    id="songsNumber"
                                    placeholder="Type number of songs"
                                    required
+                                   min="1"
                                    value={numberOfSongs}
                                    onChange={(e) => setNumberOfSongs(Number(e.target.value))}
                             />

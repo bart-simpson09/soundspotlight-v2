@@ -13,6 +13,17 @@ export interface RegisterDto {
     password: string;
 }
 
+export interface AddAlbumDto {
+    cover: string
+    title: string;
+    author: string;
+    language: string;
+    category: string;
+    releaseDate: string;
+    numberOfSongs: number;
+    description: string;
+}
+
 export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
     const url = 'http://localhost:8080';
 
@@ -158,10 +169,20 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
             },
 
             add: async (data: FormData) => {
-                return client.post('/albums/', data, {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                return client.post('/albums/add', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        'current_user_id': currentUserId,
                     },
+                    method: 'POST',
+                    data,
                 });
             },
         }),

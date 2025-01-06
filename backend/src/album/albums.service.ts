@@ -73,10 +73,6 @@ export class AlbumsService {
         const existingAuthor = await this.authorsRepository.findOneBy({name: dto.author});
         let authorID: string;
 
-        console.log("-----START------");
-        console.log(dto);
-        console.log("-----KONIEC------");
-
         if (existingAlbum) {
             fs.unlinkSync(coverFile.path);
             throw new HttpException('Album with this title already exists', 409);

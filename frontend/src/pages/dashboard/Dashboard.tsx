@@ -156,6 +156,7 @@ export const Dashboard: React.FC = () => {
                             category={album.category.name}
                             language={album.language.name}
                             onClick={() => handleAlbumClick(album.id)}
+                            isFavorite={album.isFavorite}
                         />
                     ))}
                 </div>

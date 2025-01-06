@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import {ArrowLeft, Calendar, Heart, Language, MusicDoubleNote, Star} from "iconoir-react";
+import {ArrowLeft, Calendar, Heart, HeartSolid, Language, MusicDoubleNote, Star} from "iconoir-react";
 import {useAlbumDetails} from "./UseAlbumDetails";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -37,7 +37,11 @@ export const AlbumDetails: React.FC = () => {
                                     <div className="flexRow columnGap16">
                                         <h1>{album?.albumTitle}</h1>
                                         <div>
-                                            <Heart color="#4CA6A8" width={24} height={24} />
+                                            {album?.isFavorite ? (
+                                                <HeartSolid color="#4CA6A8" width={24} height={24} />
+                                            ) : (
+                                                <Heart color="#4CA6A8" width={24} height={24} />
+                                            )}
                                         </div>
                                     </div>
                                     <p>{album?.author.name}</p>

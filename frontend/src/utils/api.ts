@@ -138,9 +138,9 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
         }),
 
         albums: () => ({
-            getByParams: async (status: string, params?: { title?: string; author?: string; category?: string; language?: string }) => {
+            getByParams: async (params?: { title?: string; author?: string; category?: string; language?: string }) => {
                 try {
-                    const queryParams = new URLSearchParams({ status });
+                    const queryParams = new URLSearchParams();
 
                     if (params) {
                         Object.entries(params).forEach(([key, value]) => {

@@ -24,7 +24,6 @@ export class AlbumsService {
     }
 
     async getAlbumsByParams(params: {
-        status: string;
         title?: string;
         author?: string;
         category?: string;
@@ -37,7 +36,7 @@ export class AlbumsService {
             .leftJoinAndSelect('album.language', 'language')
             .leftJoinAndSelect('album.category', 'category')
             .leftJoinAndSelect('album.addedBy', 'addedBy')
-            .where('album.status = :status', { status: params.status });
+            .where('album.status = :status', { status: AlbumStatus.published });
 
         if (params.title) {
             query.andWhere('LOWER(album.albumTitle) LIKE LOWER(:title)', { title: `%${params.title}%` });
@@ -69,10 +68,14 @@ export class AlbumsService {
     }
 
     async getAlbumById(id: string, currentUserId: string) {
-        const album = await this.albumsRepository.findOne({
-            where: { id: id },
-            relations: ['author', 'language', 'category']
-        });
+        const album = await this.albumsRepository
+            .createQueryBuilder('album')
+            .where('album.id = :id', { id })
+            .andWhere('album.status = :status', { status: AlbumStatus.published })
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .getOne();
 
         if (!album) {
             throw new HttpException('Album not found', 404);
@@ -174,6 +177,17 @@ export class AlbumsService {
             ...album,
             isFavorite: favoriteIds.includes(album.id),
         }));
+    }
+
+    async getPendingAlbums() {
+        return await this.albumsRepository
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
+            .where('album.status = :status', { status: AlbumStatus.pending })
+            .getMany();
     }
 
 }

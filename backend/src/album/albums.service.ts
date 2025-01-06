@@ -150,4 +150,30 @@ export class AlbumsService {
         }));
     }
 
+    async getTopAlbums(userId: string) {
+        const topAlbums = await this.albumsRepository
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
+            .where('album.status = :status', { status: AlbumStatus.published })
+            .orderBy('album.avgRate', 'DESC')
+            .limit(3)
+            .getMany();
+
+        const favoriteAlbumIds = await this.favoritesRepository
+            .createQueryBuilder('favorite')
+            .select('favorite.album_id', 'albumId')
+            .where('favorite.user_id = :userId', { userId: userId })
+            .getRawMany();
+
+        const favoriteIds = favoriteAlbumIds.map(fav => fav.albumId);
+
+        return topAlbums.map(album => ({
+            ...album,
+            isFavorite: favoriteIds.includes(album.id),
+        }));
+    }
+
 }

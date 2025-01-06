@@ -240,6 +240,37 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 }
             },
 
+            getTop: async () => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                try {
+                    return await client<Album[]>(`/topAlbums`, {
+                        headers: {
+                            'current_user_id': currentUserId,
+                        },
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        } else if (error.response?.status === 404) {
+                            console.error(`Error: ${error.response.data.message}`);
+                        }
+                    }
+
+                    throw error;
+                }
+            },
+
             add: async (data: FormData) => {
                 const currentUserId = sessionStorage.getItem('current_user_id');
 

@@ -8,7 +8,7 @@ import { AddAlbum } from './pages/addAlbum/AddAlbum';
 import { AdminConsole } from './pages/AdminConsole';
 import { AlbumDetails } from './pages/albumDetails/AlbumDetails';
 import { MyProfile } from './pages/MyProfile';
-import { TopAlbums } from './pages/TopAlbums';
+import { TopAlbums } from './pages/topAlbums/TopAlbums';
 import { YourFavorites } from './pages/yourFavorites/YourFavorites';
 
 export const AppRoutes: React.FC = () => (

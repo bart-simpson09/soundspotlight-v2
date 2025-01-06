@@ -10,11 +10,13 @@ import {diskStorage} from "multer";
 import * as path from "node:path";
 import {AuthorsService} from "../author/authors.service";
 import {Author} from "../entities/author.entity";
+import {FavoritesService} from "../favorite/favorites.service";
+import {Favorite} from "../entities/favorite.entity";
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        TypeOrmModule.forFeature([Album, Author]),
+        TypeOrmModule.forFeature([Album, Author, Favorite]),
         MulterModule.register({
             storage: diskStorage({
                 destination: path.resolve(__dirname + '../../../src/assets/covers'),
@@ -29,7 +31,7 @@ import {Author} from "../entities/author.entity";
         }),
     ],
     controllers: [AlbumsController],
-    providers: [AlbumsService, ImageService, AuthorsService],
+    providers: [AlbumsService, ImageService, AuthorsService, FavoritesService],
 })
 export class AlbumsModule {
 }

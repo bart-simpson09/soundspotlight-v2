@@ -4,6 +4,8 @@ import {AlbumsService} from "./albums.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {AlbumDto} from "./dtos/albumDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
+import {Role} from "../entities/user.entity";
+import {Roles} from "../guards/roles.decorator";
 
 @Controller()
 export class AlbumsController {
@@ -116,7 +118,7 @@ export class AlbumsController {
     }
 
     @Get('/topAlbums')
-    @AuthMetaData('SkipAuthorizationCheck')
+    //@AuthMetaData('SkipAuthorizationCheck')
     async topAlbums(
         @Res() res: Response,
         @Req() req: Request,
@@ -148,7 +150,8 @@ export class AlbumsController {
     }
 
     @Get('/pendingAlbums')
-    @AuthMetaData('SkipAuthorizationCheck')
+    //@AuthMetaData('SkipAuthorizationCheck')
+    @Roles(Role.admin)
     async pendingAlbums(
         @Res() res: Response,
         @Req() req: Request,

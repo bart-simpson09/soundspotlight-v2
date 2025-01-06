@@ -5,7 +5,7 @@ import { Register } from './pages/register/Register';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { NotFound } from './pages/NotFound';
 import { AddAlbum } from './pages/addAlbum/AddAlbum';
-import { AdminConsole } from './pages/AdminConsole';
+import { AdminConsole } from './pages/adminConsole/AdminConsole';
 import { AlbumDetails } from './pages/albumDetails/AlbumDetails';
 import { MyProfile } from './pages/MyProfile';
 import { TopAlbums } from './pages/topAlbums/TopAlbums';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Heart} from "iconoir-react";
+import {Heart, HeartSolid} from "iconoir-react";
 
 interface AlbumTileProps {
     id: string;
@@ -11,9 +11,17 @@ interface AlbumTileProps {
     category: string;
     language: string;
     onClick?: () => void;
+    isFavorite: boolean;
+    toggleFavorite?: () => void;
 }
 
-const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, releaseDate, rate, category, language, onClick }) => {
+const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, releaseDate, rate, category, language, onClick, isFavorite, toggleFavorite }) => {
+
+
+    const handleFavoriteClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        toggleFavorite && toggleFavorite();
+    };
 
     return (
         <div className="albumItemContainer" onClick={onClick}>
@@ -46,8 +54,12 @@ const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, release
                 </div>
             </div>
         </a>
-        <div className="favouriteButtonDefault flexCenter favoriteButton">
-            <Heart color="#ffffff" width={20} height={20} />
+        <div className="favouriteButtonDefault flexCenter favoriteButton" onClick={handleFavoriteClick}>
+            {isFavorite ? (
+                <HeartSolid color="#ffffff" width={20} height={20} />
+            ) : (
+                <Heart color="#ffffff" width={20} height={20} />
+            )}
         </div>
     </div>
 )

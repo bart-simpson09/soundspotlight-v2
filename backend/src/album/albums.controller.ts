@@ -12,8 +12,10 @@ export class AlbumsController {
     ) {}
 
     @Get('/albums/')
+    @AuthMetaData('SkipAuthorizationCheck')
     async albums(
         @Res() res: Response,
+        @Req() req: Request,
         @Query('status') status: string,
         @Query('title') title?: string,
         @Query('author') author?: string,
@@ -22,6 +24,7 @@ export class AlbumsController {
     ) {
         try {
             const validStatuses = ['published', 'pending'];
+            const currentUserId = req.headers['current_user_id'].toString();
 
             if (!validStatuses.includes(status)) {
                 return res.status(400).json({ message: 'Invalid status' });
@@ -32,7 +35,8 @@ export class AlbumsController {
                 title,
                 author,
                 category,
-                language
+                language,
+                currentUserId
             });
 
             for (const album of albums) {
@@ -61,9 +65,10 @@ export class AlbumsController {
     @AuthMetaData('SkipAuthorizationCheck')
     async album(@Req() req: Request, @Res() res: Response) {
         const albumId = req.params.id;
+        const currentUserId = req.headers['current_user_id'].toString();
 
         try {
-            const album = await this.albumsService.getAlbumById(albumId);
+            const album = await this.albumsService.getAlbumById(albumId, currentUserId);
 
             try {
                 const coverFile = await this.albumsService.getAlbumCover(albumId);
@@ -81,6 +86,38 @@ export class AlbumsController {
             return res.status(200).json(album);
         } catch (err) {
             return res.status(404).json({ message: "Album not found" });
+        }
+    }
+
+    @Get('/favAlbums')
+    @AuthMetaData('SkipAuthorizationCheck')
+    async favoritesAlbums(
+        @Res() res: Response,
+        @Req() req: Request,
+    ) {
+        try {
+            const currentUserId = req.headers['current_user_id'].toString();
+
+            const favAlbums = await this.albumsService.getFavoriteAlbums(currentUserId);
+
+            for (const album of favAlbums) {
+                try {
+                    const coverFile = await this.albumsService.getAlbumCover(album.id);
+                    const chunks = [];
+                    for await (const chunk of coverFile.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const coverBase64 = buffer.toString('base64');
+                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
+                } catch (avatarErr) {
+                    album.coverImageURL = null;
+                }
+            }
+
+            return res.status(200).json(favAlbums);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 

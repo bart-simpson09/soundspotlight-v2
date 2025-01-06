@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import {ArrowLeft, Calendar, Heart, Language, MusicDoubleNote, Star} from "iconoir-react";
+import {ArrowLeft, Calendar, Heart, HeartSolid, Language, MusicDoubleNote, Star} from "iconoir-react";
 import {useAlbumDetails} from "./UseAlbumDetails";
 import {useNavigate, useParams} from "react-router-dom";
 
 export const AlbumDetails: React.FC = () => {
-    const { album, fetchData } = useAlbumDetails();
+    const { album, fetchData, toggleFavorite } = useAlbumDetails();
     const { albumId } = useParams<{ albumId: string }>();
     const navigate = useNavigate();
 
@@ -18,6 +18,11 @@ export const AlbumDetails: React.FC = () => {
         }
 
     }, [albumId]);
+
+    const handleToggleFavorite = async (albumId: string) => {
+        await toggleFavorite(albumId);
+        fetchData(albumId);
+    };
 
     return (
         <div>
@@ -36,8 +41,12 @@ export const AlbumDetails: React.FC = () => {
                                 <div className="flexColumn rowGap8">
                                     <div className="flexRow columnGap16">
                                         <h1>{album?.albumTitle}</h1>
-                                        <div>
-                                            <Heart color="#4CA6A8" width={24} height={24} />
+                                        <div onClick={() => handleToggleFavorite(album?.id as string)} style={{ cursor: 'pointer' }}>
+                                            {album?.isFavorite ? (
+                                                <HeartSolid color="#4CA6A8" width={24} height={24}/>
+                                            ) : (
+                                                <Heart color="#4CA6A8" width={24} height={24}/>
+                                            )}
                                         </div>
                                     </div>
                                     <p>{album?.author.name}</p>

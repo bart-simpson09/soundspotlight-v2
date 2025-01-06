@@ -7,6 +7,7 @@ import {AlbumDto} from "./dtos/albumDtoSchema";
 import * as fs from "node:fs";
 import {Author} from "../entities/author.entity";
 import {AuthorsService} from "../author/authors.service";
+import {Favorite} from "../entities/favorite.entity";
 
 @Injectable()
 export class AlbumsService {
@@ -17,6 +18,8 @@ export class AlbumsService {
         private authorsRepository: Repository<Author>,
         private readonly imageService: ImageService,
         private authorsService: AuthorsService,
+        @InjectRepository(Favorite)
+        private favoritesRepository: Repository<Favorite>,
     ) {
     }
 
@@ -26,6 +29,7 @@ export class AlbumsService {
         author?: string;
         category?: string;
         language?: string;
+        currentUserId: string;
     }) {
         const query = this.albumsRepository
             .createQueryBuilder('album')
@@ -48,14 +52,42 @@ export class AlbumsService {
             query.andWhere('language.id = :language', { language: params.language });
         }
 
-        return await query.getMany();
+        const albums = await query.getMany();
+
+        const favoriteAlbumIds = await this.favoritesRepository
+            .createQueryBuilder('favorite')
+            .select('favorite.album.id', 'albumId')
+            .where('favorite.user.id = :userId', { userId: params.currentUserId })
+            .getRawMany();
+
+        const favoriteIdsSet = new Set(favoriteAlbumIds.map(fav => fav.albumId));
+
+        return albums.map(album => ({
+            ...album,
+            isFavorite: favoriteIdsSet.has(album.id),
+        }));
     }
 
-    async getAlbumById(id: string) {
-        return await this.albumsRepository.findOne({
+    async getAlbumById(id: string, currentUserId: string) {
+        const album = await this.albumsRepository.findOne({
             where: { id: id },
             relations: ['author', 'language', 'category']
         });
+
+        if (!album) {
+            throw new HttpException('Album not found', 404);
+        }
+
+        const favorite = await this.favoritesRepository
+            .createQueryBuilder('favorite')
+            .where('favorite.album.id = :albumId', { albumId: id })
+            .andWhere('favorite.user.id = :userId', { userId: currentUserId })
+            .getOne();
+
+        return {
+            ...album,
+            isFavorite: !!favorite,
+        };
     }
 
     async getAlbumCover(id: string): Promise<StreamableFile> {
@@ -72,10 +104,6 @@ export class AlbumsService {
         const existingAlbum = await this.albumsRepository.findOneBy({ albumTitle: dto.title });
         const existingAuthor = await this.authorsRepository.findOneBy({name: dto.author});
         let authorID: string;
-
-        console.log("-----START------");
-        console.log(dto);
-        console.log("-----KONIEC------");
 
         if (existingAlbum) {
             fs.unlinkSync(coverFile.path);
@@ -104,5 +132,22 @@ export class AlbumsService {
         });
     }
 
+    async getFavoriteAlbums(userId: string) {
+        const favoriteAlbums = await this.favoritesRepository
+            .createQueryBuilder('favorite')
+            .innerJoinAndSelect('favorite.album', 'album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
+            .where('favorite.user.id = :userId', { userId: userId })
+            .andWhere('album.status = :status', { status: AlbumStatus.published })
+            .getMany();
+
+        return favoriteAlbums.map(fav => ({
+            ...fav.album,
+            isFavorite: true,
+        }));
+    }
 
 }

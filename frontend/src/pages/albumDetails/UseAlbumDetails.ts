@@ -32,5 +32,13 @@ export const useAlbumDetails = () => {
         }
     };
 
-    return { album, fetchData };
+    const toggleFavorite = async (albumId: string) => {
+        try {
+            await API(sessionManager).favorites().toggle(albumId);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return { album, fetchData, toggleFavorite };
 };

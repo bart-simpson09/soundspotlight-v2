@@ -152,7 +152,17 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
 
                     const queryString = queryParams.toString();
 
+                    const currentUserId = sessionStorage.getItem('current_user_id');
+
+                    if (!currentUserId) {
+                        console.error('No user ID found in session storage.');
+                        return new Error('User not authenticated');
+                    }
+
                     return await client<Album[]>(`/albums/?${queryString}`, {
+                        headers: {
+                            'current_user_id': currentUserId,
+                        },
                         method: 'GET',
                     });
                 } catch (error) {
@@ -169,8 +179,18 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
             },
 
             getByID: async (id: string) => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
                     try {
                         return await client<Album>(`/albums/${id}`, {
+                            headers: {
+                                'current_user_id': currentUserId,
+                            },
                             method: 'GET',
                         });
                     } catch (error) {
@@ -189,6 +209,37 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     }
             },
 
+            getFavorites: async () => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                try {
+                    return await client<Album[]>(`/favAlbums`, {
+                        headers: {
+                            'current_user_id': currentUserId,
+                        },
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        } else if (error.response?.status === 404) {
+                            console.error(`Error: ${error.response.data.message}`);
+                        }
+                    }
+
+                    throw error;
+                }
+            },
+
             add: async (data: FormData) => {
                 const currentUserId = sessionStorage.getItem('current_user_id');
 
@@ -204,6 +255,26 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     },
                     method: 'POST',
                     data,
+                });
+            },
+        }),
+
+        favorites: () => ({
+            toggle: async (albumId: string) => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                return client.post('/toggleFavorite', {
+                    albumId
+                }, {
+                    headers: {
+                        'current_user_id': currentUserId,
+                    },
+                    method: 'POST',
                 });
             },
         }),

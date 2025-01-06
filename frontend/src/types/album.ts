@@ -17,4 +17,5 @@ export interface Album {
     category: Category;
     status: string;
     addedBy: User;
+    isFavorite: boolean;
 }

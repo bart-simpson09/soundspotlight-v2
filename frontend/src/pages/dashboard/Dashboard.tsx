@@ -8,7 +8,7 @@ import {Album} from "../../types/album";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
-    const { albums, languages, categories, loading, searchAlbums, fetchData } = useDashboard();
+    const { albums, languages, categories, loading, searchAlbums, fetchData, toggleFavorite } = useDashboard();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState<string>('');
@@ -43,6 +43,15 @@ export const Dashboard: React.FC = () => {
 
     const handleAlbumClick = (id: string) => {
         navigate(`/albumDetails/${id}`);
+    };
+
+    const handleToggleFavorite = async (albumId: string) => {
+        await toggleFavorite(albumId);
+        setAlbums((prevAlbums) =>
+            prevAlbums?.map((album) =>
+                album.id === albumId ? { ...album, isFavorite: !album.isFavorite } : album
+            )
+        );
     };
 
     if (loading) {
@@ -156,6 +165,8 @@ export const Dashboard: React.FC = () => {
                             category={album.category.name}
                             language={album.language.name}
                             onClick={() => handleAlbumClick(album.id)}
+                            isFavorite={album.isFavorite}
+                            toggleFavorite={() => handleToggleFavorite(album.id)}
                         />
                     ))}
                 </div>

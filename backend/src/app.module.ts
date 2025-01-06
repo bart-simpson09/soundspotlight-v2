@@ -13,6 +13,7 @@ import {AuthorsModule} from "./author/author.module";
 import {LanguagesModule} from "./language/language.module";
 import {CategoriesModule} from "./category/category.module";
 import {AlbumsModule} from "./album/album.module";
+import {FavoritesModule} from "./favorite/favorite.module";
 
 
 @Module({
@@ -33,7 +34,7 @@ import {AlbumsModule} from "./album/album.module";
                 logging: true,
             })
         }),
-        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule
+        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule, FavoritesModule
     ],
 })
 export class AppModule {

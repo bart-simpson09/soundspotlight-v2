@@ -132,5 +132,18 @@ export class AlbumsService {
         });
     }
 
+    async getFavoriteAlbums(userId: string) {
+        const favoriteAlbums = await this.favoritesRepository
+            .createQueryBuilder('favorite')
+            .innerJoinAndSelect('favorite.album', 'album')
+            .where('favorite.user.id = :userId', { userId: userId })
+            .andWhere('album.status = :status', { status: AlbumStatus.published })
+            .getMany();
+
+        return favoriteAlbums.map(fav => ({
+            ...fav.album,
+            isFavorite: true,
+        }));
+    }
 
 }

@@ -17,6 +17,7 @@ export class FavoritesController {
         @Body('albumId') albumId: string
     ) {
         const currentUserId = req.headers['current_user_id'].toString()
+
         try {
             try {
                 const result = await this.favoritesService.toggleFavorite(currentUserId, albumId);

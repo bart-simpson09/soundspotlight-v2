@@ -227,5 +227,25 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 });
             },
         }),
+
+        favorites: () => ({
+            toggle: async (albumId: string) => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                return client.post('/toggleFavorite', {
+                    albumId
+                }, {
+                    headers: {
+                        'current_user_id': currentUserId,
+                    },
+                    method: 'POST',
+                });
+            },
+        }),
     }
 }

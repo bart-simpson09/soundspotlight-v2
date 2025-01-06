@@ -76,5 +76,13 @@ export const useDashboard = () => {
         }
     };
 
-    return {  languages, categories, albums, loading, searchAlbums, fetchData };
+    const toggleFavorite = async (albumId: string) => {
+        try {
+            await API(sessionManager).favorites().toggle(albumId);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return {  languages, categories, albums, loading, searchAlbums, fetchData, toggleFavorite };
 };

@@ -121,6 +121,38 @@ export class AlbumsController {
         }
     }
 
+    @Get('/topAlbums')
+    @AuthMetaData('SkipAuthorizationCheck')
+    async topAlbums(
+        @Res() res: Response,
+        @Req() req: Request,
+    ) {
+        try {
+            const currentUserId = req.headers['current_user_id'].toString();
+
+            const topAlbums = await this.albumsService.getTopAlbums(currentUserId);
+
+            for (const album of topAlbums) {
+                try {
+                    const coverFile = await this.albumsService.getAlbumCover(album.id);
+                    const chunks = [];
+                    for await (const chunk of coverFile.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const coverBase64 = buffer.toString('base64');
+                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
+                } catch (avatarErr) {
+                    album.coverImageURL = null;
+                }
+            }
+
+            return res.status(200).json(topAlbums);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
     @Post('/albums/add')
     @AuthMetaData('SkipAuthorizationCheck')
     @UseInterceptors(FileInterceptor('albumCover'))

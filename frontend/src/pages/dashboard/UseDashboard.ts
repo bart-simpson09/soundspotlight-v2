@@ -4,6 +4,7 @@ import {useSessionManager} from "../../utils/sessionManager";
 import {Language} from "../../types/language";
 import {Category} from "../../types/category";
 import {Album} from "../../types/album";
+import {AxiosResponse} from "axios";
 
 export const useDashboard = () => {
     const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
@@ -16,6 +17,10 @@ export const useDashboard = () => {
         fetchData();
     }, [sessionManager.currentUser]);
 
+    function isAxiosResponse(response: any): response is AxiosResponse {
+        return response && response.data !== undefined;
+    }
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -24,7 +29,12 @@ export const useDashboard = () => {
             const responseAlbums = await API(sessionManager).albums().getByParams("published");
             setLoading(false);
 
-            if( !responseLanguages || !responseCategories || !responseAlbums ) {
+            if (
+                !isAxiosResponse(responseLanguages) ||
+                !isAxiosResponse(responseCategories) ||
+                !isAxiosResponse(responseAlbums)
+            ) {
+                console.error('Unexpected response format');
                 return;
             }
 
@@ -50,6 +60,11 @@ export const useDashboard = () => {
             });
 
             setLoading(false);
+
+            if (!isAxiosResponse(searchedAlbums)) {
+                console.error('Unexpected response format');
+                return;
+            }
 
             if (searchedAlbums) {
                 return searchedAlbums.data;

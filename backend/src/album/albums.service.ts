@@ -136,6 +136,10 @@ export class AlbumsService {
         const favoriteAlbums = await this.favoritesRepository
             .createQueryBuilder('favorite')
             .innerJoinAndSelect('favorite.album', 'album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
             .where('favorite.user.id = :userId', { userId: userId })
             .andWhere('album.status = :status', { status: AlbumStatus.published })
             .getMany();

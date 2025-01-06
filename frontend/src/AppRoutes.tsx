@@ -9,7 +9,7 @@ import { AdminConsole } from './pages/AdminConsole';
 import { AlbumDetails } from './pages/albumDetails/AlbumDetails';
 import { MyProfile } from './pages/MyProfile';
 import { TopAlbums } from './pages/TopAlbums';
-import { YourFavorites } from './pages/YourFavorites';
+import { YourFavorites } from './pages/yourFavorites/YourFavorites';
 
 export const AppRoutes: React.FC = () => (
     <Routes>

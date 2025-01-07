@@ -1,13 +1,15 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
 import {ArrowLeft, Calendar, Heart, HeartSolid, Language, MusicDoubleNote, Star} from "iconoir-react";
 import {useAlbumDetails} from "./UseAlbumDetails";
 import {useNavigate, useParams} from "react-router-dom";
+import ReviewModal from "../../components/ReviewModal";
 
 export const AlbumDetails: React.FC = () => {
-    const { album, fetchData, toggleFavorite } = useAlbumDetails();
-    const { albumId } = useParams<{ albumId: string }>();
+    const {album, fetchData, toggleFavorite} = useAlbumDetails();
+    const {albumId} = useParams<{ albumId: string }>();
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         document.title = 'Album details';
@@ -22,6 +24,12 @@ export const AlbumDetails: React.FC = () => {
     const handleToggleFavorite = async (albumId: string) => {
         await toggleFavorite(albumId);
         fetchData(albumId);
+    };
+
+    const handleReviewSubmit = async (review: string, rating: number) => {
+        const currentUserId = sessionStorage.getItem("current_user_id");
+        console.log("Review submitted:", review, "Rating:", rating, album?.id, currentUserId);
+        setIsModalOpen(false);
     };
 
     return (
@@ -41,7 +49,8 @@ export const AlbumDetails: React.FC = () => {
                                 <div className="flexColumn rowGap8">
                                     <div className="flexRow columnGap16">
                                         <h1>{album?.albumTitle}</h1>
-                                        <div onClick={() => handleToggleFavorite(album?.id as string)} style={{ cursor: 'pointer' }}>
+                                        <div onClick={() => handleToggleFavorite(album?.id as string)}
+                                             style={{cursor: 'pointer'}}>
                                             {album?.isFavorite ? (
                                                 <HeartSolid color="#4CA6A8" width={24} height={24}/>
                                             ) : (
@@ -86,15 +95,11 @@ export const AlbumDetails: React.FC = () => {
                 <div className="albumDetailsOpinions flexColumn rowGap24">
                     <div className="flexRow header">
                         <h2>People opinions</h2>
-                        <button className="buttonPrimary">Add
-                            your review
-                        </button>
+                        <button className="buttonPrimary" onClick={() => setIsModalOpen(true)}>Add your review</button>
                     </div>
                     <div className="flexColumn rowGap16 reviewsList">
                         <div className="albumDetailsOpinionItem flexRow columnGap16">
-                            <img className="standardAvatar"
-                                 src="#"
-                                 alt=""/>
+                            <img className="standardAvatar" src="#" alt=""/>
                             <div className="flexColumn rowGap8 opinionContent">
                                 <div className="flexRow opinionHeader">
                                     <div className="opinionBasicInfo flexRow columnGap8">
@@ -111,6 +116,14 @@ export const AlbumDetails: React.FC = () => {
                             </div>
                         </div>
                         <p>This album doesn't have any opinions yet. Let's add your review!</p>
+                    </div>
+                    <div className={`modalArea ${isModalOpen ? "show" : ""}`} id="addReviewModal">
+                        {isModalOpen && (
+                            <ReviewModal
+                                onClose={() => setIsModalOpen(false)}
+                                onSubmit={handleReviewSubmit}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

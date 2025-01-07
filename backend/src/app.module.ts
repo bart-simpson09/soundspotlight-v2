@@ -14,6 +14,7 @@ import {LanguagesModule} from "./language/language.module";
 import {CategoriesModule} from "./category/category.module";
 import {AlbumsModule} from "./album/album.module";
 import {FavoritesModule} from "./favorite/favorite.module";
+import {ReviewsModule} from "./review/review.module";
 
 
 @Module({
@@ -34,7 +35,7 @@ import {FavoritesModule} from "./favorite/favorite.module";
                 logging: true,
             })
         }),
-        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule, FavoritesModule
+        UserModule, AuthorsModule, LanguagesModule, CategoriesModule, AlbumsModule, FavoritesModule, ReviewsModule
     ],
 })
 export class AppModule {

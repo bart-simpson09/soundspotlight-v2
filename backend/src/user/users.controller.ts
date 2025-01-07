@@ -4,6 +4,8 @@ import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
 import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
+import {Roles} from "../guards/roles.decorator";
+import {Role} from "../entities/user.entity";
 
 @Controller()
 export class UsersController {
@@ -92,6 +94,38 @@ export class UsersController {
             }
 
             return res.status(200).json(user);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    @Get('/users')
+    @Roles(Role.admin)
+    async users(@Res() res: Response) {
+        try {
+            const users = await this.usersService.getAllUsers();
+
+            if (!users || users.length === 0) {
+                return res.status(404).json({ message: "Users not found" });
+            }
+
+            for (const user of users) {
+                delete user.password;
+                try {
+                    const avatarFile = await this.usersService.getUserAvatar(user.id);
+                    const chunks = [];
+                    for await (const chunk of avatarFile.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const avatarBase64 = buffer.toString('base64');
+                    user.avatar = `data:image/png;base64,${avatarBase64}`;
+                } catch (avatarErr) {
+                    user.avatar = null;
+                }
+            }
+
+            return res.status(200).json(users);
         } catch (err) {
             return res.status(500).json({ message: 'Internal server error' });
         }

@@ -73,6 +73,10 @@ export class UsersService {
         return await this.usersRepository.findOneBy({id: id});
     }
 
+    async getAllUsers() {
+        return await this.usersRepository.find();
+    }
+
     async getUserAvatar(id: string): Promise<StreamableFile> {
         const user = await this.usersRepository.findOneBy({ id: id });
 

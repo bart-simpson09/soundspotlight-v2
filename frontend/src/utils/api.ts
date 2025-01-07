@@ -310,6 +310,13 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     data,
                 });
             },
+
+            modifyStatus: async (albumId: string, action: string) => {
+                return client.patch('/albums/modifyStatus', {
+                    albumID: albumId,
+                    action: action
+                });
+            },
         }),
 
         favorites: () => ({

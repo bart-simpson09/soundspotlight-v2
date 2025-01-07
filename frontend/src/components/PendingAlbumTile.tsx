@@ -27,8 +27,8 @@ const PendingAlbumTile: React.FC<PendingAlbumTileProps> = ({ id, coverImage, tit
                         <h5>{author}</h5>
                     </div>
                     <div className="flexRow columnGap8">
-                        <button className="buttonOutlined positiveAction">Approve</button>
-                        <button className="buttonOutlined importantAction">Decline</button>
+                        <button className="buttonOutlined positiveAction" onClick={onApprove}>Approve</button>
+                        <button className="buttonOutlined importantAction" onClick={onDecline}>Decline</button>
                     </div>
                 </div>
                 <span className="dividerHorizon40"></span>

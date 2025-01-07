@@ -192,8 +192,7 @@ export class AlbumsController {
     }
 
     @Patch('/albums/modifyStatus')
-    @AuthMetaData('SkipAuthorizationCheck')
-    //@Roles(Role.admin)
+    @Roles(Role.admin)
     async modifyAlbumStatus(
         @Body() body: { albumID: string; action: string },
     ) {

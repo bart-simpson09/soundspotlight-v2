@@ -8,7 +8,7 @@ import PendingAlbumTile from "../../components/PendingAlbumTile";
 export const AdminConsole: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState("pendingReviews");
-    const { albums, fetchData } = useAdminConsole();
+    const { albums, fetchData, modifyAlbumStatus } = useAdminConsole();
     const [finalAlbums, setAlbums] = useState<Album[] | undefined>(albums);
 
     useEffect(() => {
@@ -101,8 +101,8 @@ export const AdminConsole: React.FC = () => {
                                     language={album.language.name}
                                     description={album.description}
                                     addedBy={`${album.addedBy.firstName} ${album.addedBy.lastName}`}
-                                    onApprove={() => console.log(`Approved album: ${album.id}`)}
-                                    onDecline={() => console.log(`Declined album: ${album.id}`)}
+                                    onApprove={() => modifyAlbumStatus(album.id, "approve")}
+                                    onDecline={() => modifyAlbumStatus(album.id, "decline")}
                                 />
                             ))
                         ) : (

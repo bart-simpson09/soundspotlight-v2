@@ -37,5 +37,14 @@ export const useAdminConsole = () => {
         }
     };
 
-    return {  albums, loading, fetchData };
+    const modifyAlbumStatus = async (albumId: string, action: string) => {
+        try {
+            await API(sessionManager).albums().modifyStatus(albumId, action);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return {  albums, loading, fetchData, modifyAlbumStatus };
 };

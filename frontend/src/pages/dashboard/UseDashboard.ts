@@ -26,7 +26,7 @@ export const useDashboard = () => {
             setLoading(true);
             const responseLanguages = await API(sessionManager).languages().get();
             const responseCategories = await API(sessionManager).categories().get();
-            const responseAlbums = await API(sessionManager).albums().getByParams("published");
+            const responseAlbums = await API(sessionManager).albums().getByParams();
             setLoading(false);
 
             if (
@@ -52,7 +52,7 @@ export const useDashboard = () => {
     const searchAlbums = async (title?: string, author?: string, category?: string, language?: string) => {
         try {
             setLoading(true);
-            const searchedAlbums = await API(sessionManager).albums().getByParams("published", {
+            const searchedAlbums = await API(sessionManager).albums().getByParams({
                 title,
                 author,
                 category,

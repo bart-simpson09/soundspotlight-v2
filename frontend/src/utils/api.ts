@@ -36,31 +36,31 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
     });
 
     return {
-        login: async (email: string, password: string) => {
-            return client<User>('/auth/login', {
-                method: 'POST',
-                data: {
-                    email,
-                    password,
-                },
-            });
-        },
+        users: () => ({
+            login: async (email: string, password: string) => {
+                return client<User>('/auth/login', {
+                    method: 'POST',
+                    data: {
+                        email,
+                        password,
+                    },
+                });
+            },
 
-        register: async (data: RegisterDto) => {
-            return client<User>('/auth/register', {
-                method: 'POST',
-                data,
-            });
-        },
+            register: async (data: RegisterDto) => {
+                return client<User>('/auth/register', {
+                    method: 'POST',
+                    data,
+                });
+            },
 
-        logout: async () => {
-            return client('/auth/logout', {
-                method: 'POST',
-            });
-        },
+            logout: async () => {
+                return client('/auth/logout', {
+                    method: 'POST',
+                });
+            },
 
-        user: (id: string) => ({
-            get: async () => {
+            getById: async (id: string) => {
                 try {
                     return await client<User>(`/users/${id}`, {
                         method: 'GET',
@@ -74,6 +74,29 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     }
                     throw error;
                 }
+            },
+
+            getAll: async () => {
+                try {
+                    return await client<User[]>(`/users`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+                        }
+                    }
+                    throw error;
+                }
+            },
+
+            modifyRole: async (userId: string, action: string) => {
+                return client.patch('/users/modifyRole', {
+                    userID: userId,
+                    action: action
+                });
             },
         }),
 
@@ -138,9 +161,9 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
         }),
 
         albums: () => ({
-            getByParams: async (status: string, params?: { title?: string; author?: string; category?: string; language?: string }) => {
+            getByParams: async (params?: { title?: string; author?: string; category?: string; language?: string }) => {
                 try {
-                    const queryParams = new URLSearchParams({ status });
+                    const queryParams = new URLSearchParams();
 
                     if (params) {
                         Object.entries(params).forEach(([key, value]) => {
@@ -271,6 +294,28 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 }
             },
 
+            getPending: async () => {
+
+                try {
+                    return await client<Album[]>(`/pendingAlbums`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        } else if (error.response?.status === 404) {
+                            console.error(`Error: ${error.response.data.message}`);
+                        }
+                    }
+
+                    throw error;
+                }
+            },
+
             add: async (data: FormData) => {
                 const currentUserId = sessionStorage.getItem('current_user_id');
 
@@ -286,6 +331,13 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     },
                     method: 'POST',
                     data,
+                });
+            },
+
+            modifyStatus: async (albumId: string, action: string) => {
+                return client.patch('/albums/modifyStatus', {
+                    albumID: albumId,
+                    action: action
                 });
             },
         }),

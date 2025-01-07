@@ -2,7 +2,7 @@ import {HttpException, Injectable, StreamableFile} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import {User} from "../entities/user.entity";
+import {Role, User} from "../entities/user.entity";
 import {RegisterDto} from "./dtos/registerDtoSchema";
 import {LoginDto} from "./dtos/loginDtoSchema";
 import {JwtService} from "../shared/jwt.service";
@@ -73,6 +73,14 @@ export class UsersService {
         return await this.usersRepository.findOneBy({id: id});
     }
 
+    async getAllUsers() {
+        return await this.usersRepository.find({
+            order: {
+                firstName: 'ASC',
+            },
+        });
+    }
+
     async getUserAvatar(id: string): Promise<StreamableFile> {
         const user = await this.usersRepository.findOneBy({ id: id });
 
@@ -81,5 +89,23 @@ export class UsersService {
         }
 
         return this.imageService.getImage(user.avatar);
+    }
+
+    async modifyUserRole(id: string, action: string) {
+        const existingUser = await this.usersRepository.findOneBy({ id });
+
+        if (!existingUser) {
+            throw new HttpException('User not found', 404);
+        }
+
+        if (action === 'grant') {
+            existingUser.role = Role.admin;
+        } else if (action === 'revoke') {
+            existingUser.role = Role.user;
+        } else {
+            throw new HttpException('Invalid action', 400);
+        }
+
+        await this.usersRepository.save(existingUser);
     }
 }

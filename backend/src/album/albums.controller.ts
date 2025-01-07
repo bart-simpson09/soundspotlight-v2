@@ -1,9 +1,11 @@
-import {Body, Controller, Get, Post, Query, Req, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
+import {Body, Controller, Get, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
 import {Request, Response} from "express";
 import {AlbumsService} from "./albums.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {AlbumDto} from "./dtos/albumDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
+import {Role} from "../entities/user.entity";
+import {Roles} from "../guards/roles.decorator";
 
 @Controller()
 export class AlbumsController {
@@ -16,22 +18,16 @@ export class AlbumsController {
     async albums(
         @Res() res: Response,
         @Req() req: Request,
-        @Query('status') status: string,
+        //@Query('status') status: string,
         @Query('title') title?: string,
         @Query('author') author?: string,
         @Query('category') category?: string,
         @Query('language') language?: string
     ) {
         try {
-            const validStatuses = ['published', 'pending'];
             const currentUserId = req.headers['current_user_id'].toString();
 
-            if (!validStatuses.includes(status)) {
-                return res.status(400).json({ message: 'Invalid status' });
-            }
-
             const albums = await this.albumsService.getAlbumsByParams({
-                status,
                 title,
                 author,
                 category,
@@ -122,7 +118,7 @@ export class AlbumsController {
     }
 
     @Get('/topAlbums')
-    @AuthMetaData('SkipAuthorizationCheck')
+    //@AuthMetaData('SkipAuthorizationCheck')
     async topAlbums(
         @Res() res: Response,
         @Req() req: Request,
@@ -153,6 +149,36 @@ export class AlbumsController {
         }
     }
 
+    @Get('/pendingAlbums')
+    @Roles(Role.admin)
+    async pendingAlbums(
+        @Res() res: Response,
+        @Req() req: Request,
+    ) {
+        try {
+            const pendingAlbums = await this.albumsService.getPendingAlbums();
+
+            for (const album of pendingAlbums) {
+                try {
+                    const coverFile = await this.albumsService.getAlbumCover(album.id);
+                    const chunks = [];
+                    for await (const chunk of coverFile.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const coverBase64 = buffer.toString('base64');
+                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
+                } catch (avatarErr) {
+                    album.coverImageURL = null;
+                }
+            }
+
+            return res.status(200).json(pendingAlbums);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
     @Post('/albums/add')
     @AuthMetaData('SkipAuthorizationCheck')
     @UseInterceptors(FileInterceptor('albumCover'))
@@ -163,5 +189,14 @@ export class AlbumsController {
     ) {
         const currentUserId = req.headers['current_user_id'].toString();
         return this.albumsService.addAlbum(albumDto, albumCover, currentUserId);
+    }
+
+    @Patch('/albums/modifyStatus')
+    @Roles(Role.admin)
+    async modifyAlbumStatus(
+        @Body() body: { albumID: string; action: string },
+    ) {
+        const { albumID, action } = body;
+        return this.albumsService.modifyAlbumStatus(albumID, action);
     }
 }

@@ -8,7 +8,7 @@ import {User} from "./user.entity";
 export enum AlbumStatus {
     pending = 'pending',
     published = 'published',
-    archived = 'archived',
+    rejected = 'rejected',
 }
 
 @Entity({name: 'albums'})

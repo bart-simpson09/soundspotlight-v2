@@ -24,7 +24,6 @@ export class AlbumsService {
     }
 
     async getAlbumsByParams(params: {
-        status: string;
         title?: string;
         author?: string;
         category?: string;
@@ -37,7 +36,7 @@ export class AlbumsService {
             .leftJoinAndSelect('album.language', 'language')
             .leftJoinAndSelect('album.category', 'category')
             .leftJoinAndSelect('album.addedBy', 'addedBy')
-            .where('album.status = :status', { status: params.status });
+            .where('album.status = :status', { status: AlbumStatus.published });
 
         if (params.title) {
             query.andWhere('LOWER(album.albumTitle) LIKE LOWER(:title)', { title: `%${params.title}%` });
@@ -69,10 +68,14 @@ export class AlbumsService {
     }
 
     async getAlbumById(id: string, currentUserId: string) {
-        const album = await this.albumsRepository.findOne({
-            where: { id: id },
-            relations: ['author', 'language', 'category']
-        });
+        const album = await this.albumsRepository
+            .createQueryBuilder('album')
+            .where('album.id = :id', { id })
+            .andWhere('album.status = :status', { status: AlbumStatus.published })
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .getOne();
 
         if (!album) {
             throw new HttpException('Album not found', 404);
@@ -175,5 +178,35 @@ export class AlbumsService {
             isFavorite: favoriteIds.includes(album.id),
         }));
     }
+
+    async getPendingAlbums() {
+        return await this.albumsRepository
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .leftJoinAndSelect('album.addedBy', 'addedBy')
+            .where('album.status = :status', { status: AlbumStatus.pending })
+            .getMany();
+    }
+
+    async modifyAlbumStatus(id: string, action: string) {
+        const existingAlbum = await this.albumsRepository.findOneBy({ id });
+
+        if (!existingAlbum) {
+            throw new HttpException('Album not found', 404);
+        }
+
+        if (action === 'approve') {
+            existingAlbum.status = AlbumStatus.published;
+        } else if (action === 'decline') {
+            existingAlbum.status = AlbumStatus.rejected;
+        } else {
+            throw new HttpException('Invalid action', 400);
+        }
+
+        await this.albumsRepository.save(existingAlbum);
+    }
+
 
 }

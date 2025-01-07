@@ -3,9 +3,9 @@ import NavBar from "../../components/navBar/NavBar";
 import {AlbumList, Notes, StarSolid, UserCircle} from "iconoir-react";
 import {useAdminConsole} from "./useAdminConsole";
 import {Album} from "../../types/album";
-import PendingAlbumTile from "../../components/PendingAlbumTile";
+import PendingAlbumTile from "../../components/adminConsole/PendingAlbumTile";
 import {User} from "../../types";
-import UserTile from "../../components/UserTile";
+import UserTile from "../../components/adminConsole/UserTile";
 
 export const AdminConsole: React.FC = () => {
 

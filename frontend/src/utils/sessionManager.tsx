@@ -82,7 +82,7 @@ export const SessionManagerProvider: React.FC<Props> = ({ children }: Props) => 
 
     const fetchUser = async (currentUserId: string) => {
         try {
-            const response = await API(sessionManager).user(currentUserId).get();
+            const response = await API(sessionManager).users().getById(currentUserId);
             setUser(response.data);
 
         } catch (error) {
@@ -101,7 +101,7 @@ export const SessionManagerProvider: React.FC<Props> = ({ children }: Props) => 
             setUser(user);
         },
         logout: () => {
-            API(sessionManager).logout();
+            API(sessionManager).users().logout();
 
             currentUserIdManager.setCurrentUserId(undefined);
             setUser(undefined);

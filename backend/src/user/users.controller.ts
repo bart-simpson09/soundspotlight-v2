@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpException, Post, Req, Res} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, Patch, Post, Req, Res} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
@@ -129,5 +129,14 @@ export class UsersController {
         } catch (err) {
             return res.status(500).json({ message: 'Internal server error' });
         }
+    }
+
+    @Patch('/users/modifyRole')
+    @Roles(Role.admin)
+    async modifyUserRole(
+        @Body() body: { userID: string; action: string },
+    ) {
+        const { userID, action } = body;
+        return this.usersService.modifyUserRole(userID, action);
     }
 }

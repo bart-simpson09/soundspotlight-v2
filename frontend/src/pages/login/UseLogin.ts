@@ -38,7 +38,7 @@ export const useLogin = () => {
     const loginUser = async (email: string, password: string ) => {
         try {
             setLoading(true);
-            const response = await API(sessionManager).login(email, password);
+            const response = await API(sessionManager).users().login(email, password);
             setLoading(false);
             sessionManager.setCurrentUser(response.data);
             navigate('/dashboard');

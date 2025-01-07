@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import {AlbumList, Notes, StarSolid, User, UserCrown} from "iconoir-react";
+import {AlbumList, Notes, StarSolid, UserCircle} from "iconoir-react";
 import {useAdminConsole} from "./useAdminConsole";
 import {Album} from "../../types/album";
 import PendingAlbumTile from "../../components/PendingAlbumTile";
+import {User} from "../../types";
+import UserTile from "../../components/UserTile";
 
 export const AdminConsole: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState("pendingReviews");
-    const { albums, fetchData, modifyAlbumStatus } = useAdminConsole();
+    const { albums, fetchData, modifyAlbumStatus, users, modifyUserRole } = useAdminConsole();
     const [finalAlbums, setAlbums] = useState<Album[] | undefined>(albums);
+    const [finalUsers, setUsers] = useState<User[] | undefined>(users);
 
     useEffect(() => {
         document.title = 'Admin console';
@@ -19,7 +22,8 @@ export const AdminConsole: React.FC = () => {
 
     useEffect(() => {
         setAlbums(albums);
-    }, [albums]);
+        setUsers(users);
+    }, [albums, users]);
 
 
 
@@ -51,7 +55,7 @@ export const AdminConsole: React.FC = () => {
                     <button
                         className={`tabItem flexRow columnGap8 ${activeTab === "manageUsers" ? "active" : ""}`}
                         onClick={() => handleTabClick("manageUsers")}>
-                        <User color={activeTab === "manageUsers" ? "#4CA6A8" : "#9195AA"}/>
+                        <UserCircle color={activeTab === "manageUsers" ? "#4CA6A8" : "#9195AA"}/>
                         Manage users
                     </button>
                 </div>
@@ -111,26 +115,22 @@ export const AdminConsole: React.FC = () => {
                     </div>
                     <div id="manageUsers" className="tabContent flexColumn rowGap16"
                          style={{display: activeTab === "manageUsers" ? 'block' : 'none'}}>
-                        <div className="yourProfileItem flexRow yourProfileItemHeader">
-                            <div className="flexRow columnGap16">
-                                <img className="standardAvatar" src="/public/assets/imgs/avatars/<?= $user['avatar'] ?>"
-                                     alt=""/>
-                                <div className="flexColumn">
-                                    <div className="flexRow columnGap4" id="userNameSection">
-                                        <h4>user fist and last name</h4>
-                                        <UserCrown color={"#4CA6A8"}/>
-                                        <i className="iconoir-user-crown"></i>
-                                    </div>
-                                    <h5>user email</h5>
-                                </div>
-                            </div>
-                            <div className="flexRow columnGap8">
-                                <button className="buttonOutlined">Revoke admin role</button>
-                                <button className="buttonOutlined">Grant admin role</button>
-                                <button className="buttonOutlined importantAction"></button>
-                                <h5>This is your account</h5>
-                            </div>
-                        </div>
+                        {finalUsers && finalUsers.length > 0 && (
+                            finalUsers.map((user) => (
+                                <UserTile
+                                    key={user.id}
+                                    id={user.id}
+                                    avatar={user.avatar}
+                                    firstName={user.firstName}
+                                    lastName={user.lastName}
+                                    email={user.email}
+                                    role={user.role}
+                                    currentUserId={sessionStorage.getItem("current_user_id") || ""}
+                                    revokeAdmin={() => modifyUserRole(user.id, "revoke")}
+                                    grantAdmin={() => modifyUserRole(user.id, "grant")}
+                                />
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

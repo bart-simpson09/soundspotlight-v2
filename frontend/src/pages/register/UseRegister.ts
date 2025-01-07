@@ -18,7 +18,7 @@ export const useRegister = () => {
     const register = async (dto: RegisterDto) => {
         try {
             setLoading(true);
-            const response = await API(sessionManager).register(dto);
+            const response = await API(sessionManager).users().register(dto);
             setLoading(false);
             sessionManager.setCurrentUser(response.data);
             navigate('/');

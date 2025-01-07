@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Query, Req, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
+import {Body, Controller, Get, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors} from '@nestjs/common';
 import {Request, Response} from "express";
 import {AlbumsService} from "./albums.service";
 import {FileInterceptor} from "@nestjs/platform-express";
@@ -150,7 +150,6 @@ export class AlbumsController {
     }
 
     @Get('/pendingAlbums')
-    //@AuthMetaData('SkipAuthorizationCheck')
     @Roles(Role.admin)
     async pendingAlbums(
         @Res() res: Response,
@@ -190,5 +189,15 @@ export class AlbumsController {
     ) {
         const currentUserId = req.headers['current_user_id'].toString();
         return this.albumsService.addAlbum(albumDto, albumCover, currentUserId);
+    }
+
+    @Patch('/albums/modifyStatus')
+    @AuthMetaData('SkipAuthorizationCheck')
+    //@Roles(Role.admin)
+    async modifyAlbumStatus(
+        @Body() body: { albumID: string; action: string },
+    ) {
+        const { albumID, action } = body;
+        return this.albumsService.modifyAlbumStatus(albumID, action);
     }
 }

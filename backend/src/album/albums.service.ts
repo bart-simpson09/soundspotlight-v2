@@ -190,4 +190,23 @@ export class AlbumsService {
             .getMany();
     }
 
+    async modifyAlbumStatus(id: string, action: string) {
+        const existingAlbum = await this.albumsRepository.findOneBy({ id });
+
+        if (!existingAlbum) {
+            throw new HttpException('Album not found', 404);
+        }
+
+        if (action === 'approve') {
+            existingAlbum.status = AlbumStatus.published;
+        } else if (action === 'decline') {
+            existingAlbum.status = AlbumStatus.rejected;
+        } else {
+            throw new HttpException('Invalid action', 400);
+        }
+
+        await this.albumsRepository.save(existingAlbum);
+    }
+
+
 }

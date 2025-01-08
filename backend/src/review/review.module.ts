@@ -4,11 +4,12 @@ import {ConfigModule} from "@nestjs/config";
 import {Review} from "../entities/review.entity";
 import {ReviewsController} from "./reviews.controller";
 import {ReviewsService} from "./reviews.service";
+import {Album} from "../entities/album.entity";
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        TypeOrmModule.forFeature([Review]),
+        TypeOrmModule.forFeature([Review, Album]),
     ],
 
     controllers: [ReviewsController],

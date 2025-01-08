@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
+import {Body, Controller, Get, Patch, Post, Req, Res} from '@nestjs/common';
 import {Request, Response} from "express";
 import {ReviewsService} from "./reviews.service";
 import {ReviewDto} from "./dtos/reviewDtoSchema";
@@ -35,5 +35,14 @@ export class ReviewsController {
         } catch (err) {
             return res.status(500).json({ message: 'Internal server error' });
         }
+    }
+
+    @Patch('/reviews/modifyStatus')
+    @Roles(Role.admin)
+    async modifyAlbumStatus(
+        @Body() body: { reviewId: string; action: string },
+    ) {
+        const { reviewId, action } = body;
+        return this.reviewsService.modifyReviewStatus(reviewId, action);
     }
 }

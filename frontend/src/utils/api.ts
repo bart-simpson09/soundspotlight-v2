@@ -5,6 +5,7 @@ import {Author} from "../types/author";
 import {Language} from "../types/language";
 import {Category} from "../types/category";
 import {Album} from "../types/album";
+import {Review} from "../types/review";
 
 export interface RegisterDto {
     email: string;
@@ -295,7 +296,6 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
             },
 
             getPending: async () => {
-
                 try {
                     return await client<Album[]>(`/pendingAlbums`, {
                         method: 'GET',
@@ -376,6 +376,34 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                         'current_user_id': currentUserId,
                     },
                     method: 'POST',
+                });
+            },
+
+            getPending: async () => {
+                try {
+                    return await client<Review[]>(`/pendingReviews`, {
+                        method: 'GET',
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 403) {
+                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                            sessionManager.logout();
+
+                            return null;
+                        } else if (error.response?.status === 404) {
+                            console.error(`Error: ${error.response.data.message}`);
+                        }
+                    }
+
+                    throw error;
+                }
+            },
+
+            modifyStatus: async (reviewId: string, action: string) => {
+                return client.patch('/reviews/modifyStatus', {
+                    albumID: reviewId,
+                    action: action
                 });
             },
         }),

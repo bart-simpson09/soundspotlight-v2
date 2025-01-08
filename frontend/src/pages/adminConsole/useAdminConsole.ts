@@ -4,10 +4,12 @@ import {useSessionManager} from "../../utils/sessionManager";
 import {Album} from "../../types/album";
 import {AxiosResponse} from "axios";
 import {User} from "../../types";
+import {Review} from "../../types/review";
 
 export const useAdminConsole = () => {
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
     const [users, setUsers] = useState<User[] | undefined>(undefined);
+    const [reviews, setReviews] = useState<Review[] | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
@@ -26,17 +28,19 @@ export const useAdminConsole = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
+            const responseReviews = await API(sessionManager).reviews().getPending()
             const responseAlbums = await API(sessionManager).albums().getPending();
             const responseUsers = await API(sessionManager).users().getAll();
             setLoading(false);
 
-            if (!isAxiosResponse(responseAlbums) || !isAxiosResponse(responseUsers)) {
+            if (!isAxiosResponse(responseAlbums) || !isAxiosResponse(responseUsers) || !isAxiosResponse(responseReviews)) {
                 console.error('Unexpected response format');
                 return;
             }
 
             setAlbums(responseAlbums.data);
             setUsers(responseUsers.data);
+            setReviews(responseReviews.data);
         } catch (error) {
             console.trace(error);
             setLoading(false);
@@ -54,6 +58,15 @@ export const useAdminConsole = () => {
         }
     };
 
+    const modifyReviewStatus = async (reviewId: string, action: string) => {
+        try {
+            await API(sessionManager).reviews().modifyStatus(reviewId, action);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const modifyUserRole = async (userId: string, action: string) => {
         try {
             await API(sessionManager).users().modifyRole(userId, action);
@@ -63,5 +76,5 @@ export const useAdminConsole = () => {
         }
     };
 
-    return {  albums, loading, fetchData, modifyAlbumStatus, users, modifyUserRole };
+    return {  albums, loading, fetchData, modifyAlbumStatus, users, modifyUserRole, reviews, modifyReviewStatus };
 };

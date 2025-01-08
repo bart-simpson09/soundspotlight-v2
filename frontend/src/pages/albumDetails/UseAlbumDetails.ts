@@ -12,6 +12,10 @@ export const useAlbumDetails = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if(!sessionManager.currentUser){
+            return;
+        }
+
         if (albumId) {
             fetchData(albumId);
         }

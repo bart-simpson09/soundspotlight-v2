@@ -11,6 +11,10 @@ export const useAddAlbum = () => {
     const sessionManager = useSessionManager();
 
     useEffect(() => {
+        if(!sessionManager.currentUser){
+            return;
+        }
+
         fetchData();
     }, [sessionManager.currentUser]);
 

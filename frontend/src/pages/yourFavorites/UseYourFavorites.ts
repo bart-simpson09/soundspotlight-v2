@@ -10,6 +10,10 @@ export const useYourFavorites = () => {
     const sessionManager = useSessionManager();
 
     useEffect(() => {
+        if(!sessionManager.currentUser){
+            return;
+        }
+
         fetchData();
     }, [sessionManager.currentUser]);
 

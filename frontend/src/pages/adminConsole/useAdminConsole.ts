@@ -12,6 +12,10 @@ export const useAdminConsole = () => {
     const sessionManager = useSessionManager();
 
     useEffect(() => {
+        if(!sessionManager.currentUser){
+            return;
+        }
+
         fetchData();
     }, [sessionManager.currentUser]);
 

@@ -14,6 +14,9 @@ export const useDashboard = () => {
     const sessionManager = useSessionManager();
 
     useEffect(() => {
+        if(!sessionManager.currentUser){
+            return;
+        }
         fetchData();
     }, [sessionManager.currentUser]);
 

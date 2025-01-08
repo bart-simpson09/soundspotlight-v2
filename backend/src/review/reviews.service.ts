@@ -51,6 +51,9 @@ export class ReviewsService {
             relations: ['album']
         });
 
+        console.log(id)
+        console.log(existingReview)
+
 
         if (!existingReview) {
             throw new HttpException('Album not found', 404);
@@ -59,13 +62,15 @@ export class ReviewsService {
         if (action === 'approve') {
             existingReview.status = ReviewStatus.approved;
 
+
+
             const albumId = existingReview.album.id;
 
             const album = await this.albumsRepository.findOneBy({ id: albumId });
             if (album.avgRate === 0) {
                 album.avgRate = existingReview.rate;
             } else {
-                album.avgRate = (album.avgRate + existingReview.rate) / 2;
+                album.avgRate = parseFloat(((album.avgRate + existingReview.rate) / 2).toFixed(2));
             }
 
             await this.albumsRepository.save(album)

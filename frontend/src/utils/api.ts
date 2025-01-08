@@ -402,7 +402,7 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
 
             modifyStatus: async (reviewId: string, action: string) => {
                 return client.patch('/reviews/modifyStatus', {
-                    albumID: reviewId,
+                    reviewId: reviewId,
                     action: action
                 });
             },

@@ -6,7 +6,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import ReviewModal from "../../components/ReviewModal";
 
 export const AlbumDetails: React.FC = () => {
-    const {album, fetchData, toggleFavorite} = useAlbumDetails();
+    const {album, fetchData, toggleFavorite, addReview} = useAlbumDetails();
     const {albumId} = useParams<{ albumId: string }>();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,8 +27,14 @@ export const AlbumDetails: React.FC = () => {
     };
 
     const handleReviewSubmit = async (review: string, rating: number) => {
-        const currentUserId = sessionStorage.getItem("current_user_id");
-        console.log("Review submitted:", review, "Rating:", rating, album?.id, currentUserId);
+
+        const reviewData = {
+            rate: rating,
+            content: review,
+            albumId: album?.id
+        }
+
+        await addReview(reviewData);
         setIsModalOpen(false);
     };
 

@@ -14,6 +14,8 @@ export class ReviewsService {
 
     async addReview(dto: ReviewDto, currentUserId: string) {
 
+        console.log(dto)
+
         return this.reviewsRepository.save({
             rate: dto.rate,
             content: dto.content,

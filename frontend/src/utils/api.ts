@@ -361,5 +361,23 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 });
             },
         }),
+
+        reviews: () => ({
+            add: async (data: object) => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                return client.post('/reviews/add', data, {
+                    headers: {
+                        'current_user_id': currentUserId,
+                    },
+                    method: 'POST',
+                });
+            },
+        }),
     }
 }

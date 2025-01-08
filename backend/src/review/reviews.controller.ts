@@ -2,6 +2,7 @@ import {Body, Controller, Post, Req} from '@nestjs/common';
 import {Request} from "express";
 import {ReviewsService} from "./reviews.service";
 import {ReviewDto} from "./dtos/reviewDtoSchema";
+import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
 @Controller()
 export class ReviewsController {
@@ -10,6 +11,7 @@ export class ReviewsController {
     ) {}
 
     @Post('/reviews/add')
+    @AuthMetaData('SkipAuthorizationCheck')
     async addReview(
         @Body() reviewDto: ReviewDto,
         @Req() req: Request

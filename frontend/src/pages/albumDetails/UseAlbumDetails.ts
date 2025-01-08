@@ -44,5 +44,16 @@ export const useAlbumDetails = () => {
         }
     };
 
-    return { album, fetchData, toggleFavorite };
+    const addReview = async (reviewDate: object) => {
+        try {
+            setLoading(true);
+            await API(sessionManager).reviews().add(reviewDate);
+            setLoading(false);
+            alert("Review added and sent to administration!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    return { album, fetchData, toggleFavorite, addReview };
 };

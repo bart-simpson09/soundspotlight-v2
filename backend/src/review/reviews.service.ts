@@ -14,8 +14,6 @@ export class ReviewsService {
 
     async addReview(dto: ReviewDto, currentUserId: string) {
 
-        console.log(dto)
-
         return this.reviewsRepository.save({
             rate: dto.rate,
             content: dto.content,
@@ -23,5 +21,21 @@ export class ReviewsService {
             album: {id: dto.albumId},
             status: ReviewStatus.pending
         })
+    }
+
+    async getPendingReviews() {
+        return await this.reviewsRepository.createQueryBuilder('review')
+            .leftJoinAndSelect('review.album', 'album')
+            .leftJoinAndSelect('album.author', 'author')
+            .select([
+                'review.id',
+                'review.status',
+                'review.content',
+                'review.rate',
+                'album.albumTitle',
+                'author.name'
+            ])
+            .where('review.status = :status', { status: 'pending' })
+            .getMany();
     }
 }

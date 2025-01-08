@@ -1,8 +1,10 @@
-import {Body, Controller, Post, Req} from '@nestjs/common';
-import {Request} from "express";
+import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
+import {Request, Response} from "express";
 import {ReviewsService} from "./reviews.service";
 import {ReviewDto} from "./dtos/reviewDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
+import {Roles} from "../guards/roles.decorator";
+import {Role} from "../entities/user.entity";
 
 @Controller()
 export class ReviewsController {
@@ -18,5 +20,20 @@ export class ReviewsController {
     ) {
         const currentUserId = req.headers['current_user_id'].toString();
         return this.reviewsService.addReview(reviewDto, currentUserId);
+    }
+
+    @Get('/pendingReviews')
+    @Roles(Role.admin)
+    //@AuthMetaData('SkipAuthorizationCheck')
+    async pendingReviews(
+        @Res() res: Response,
+    ) {
+        try {
+            const pendingReviews = await this.reviewsService.getPendingReviews();
+
+            return res.status(200).json(pendingReviews);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
     }
 }

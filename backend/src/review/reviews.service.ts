@@ -16,7 +16,6 @@ export class ReviewsService {
     }
 
     async addReview(dto: ReviewDto, currentUserId: string) {
-
         return this.reviewsRepository.save({
             rate: dto.rate,
             content: dto.content,
@@ -24,6 +23,25 @@ export class ReviewsService {
             album: {id: dto.albumId},
             status: ReviewStatus.pending
         })
+    }
+
+    async getAlbumReviews(albumId: string) {
+        return await this.reviewsRepository.createQueryBuilder('review')
+            .leftJoinAndSelect('review.author', 'user')
+            .leftJoinAndSelect('review.album', 'album')
+            .select([
+                'review.id',
+                'review.content',
+                'review.rate',
+                'review.createDate',
+                'user.firstName',
+                'user.lastName',
+                'user.avatar'
+            ])
+            .where('album.id = :albumId', { albumId })
+            .andWhere('review.status = :status', { status: ReviewStatus.approved })
+            .orderBy('review.createDate', 'DESC')
+            .getMany();
     }
 
     async getPendingReviews() {
@@ -51,10 +69,6 @@ export class ReviewsService {
             relations: ['album']
         });
 
-        console.log(id)
-        console.log(existingReview)
-
-
         if (!existingReview) {
             throw new HttpException('Album not found', 404);
         }
@@ -62,11 +76,9 @@ export class ReviewsService {
         if (action === 'approve') {
             existingReview.status = ReviewStatus.approved;
 
-
-
             const albumId = existingReview.album.id;
-
             const album = await this.albumsRepository.findOneBy({ id: albumId });
+
             if (album.avgRate === 0) {
                 album.avgRate = existingReview.rate;
             } else {

@@ -5,11 +5,13 @@ import {ReviewDto} from "./dtos/reviewDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
 import {Roles} from "../guards/roles.decorator";
 import {Role} from "../entities/user.entity";
+import {ImageService} from "../shared/image.service";
 
 @Controller()
 export class ReviewsController {
     constructor(
         private readonly reviewsService: ReviewsService,
+        private readonly imageService: ImageService,
     ) {}
 
     @Post('/reviews/add')
@@ -44,5 +46,34 @@ export class ReviewsController {
     ) {
         const { reviewId, action } = body;
         return this.reviewsService.modifyReviewStatus(reviewId, action);
+    }
+
+    @Get('/reviews/:id')
+    @AuthMetaData('SkipAuthorizationCheck')
+    async reviews(@Req() req: Request, @Res() res: Response) {
+        const albumId = req.params.id;
+
+        try {
+            const albumReviews = await this.reviewsService.getAlbumReviews(albumId);
+
+            for (const albumReview of albumReviews) {
+                try {
+                    const userAvatar = await this.imageService.getImage(albumReview.author.avatar);
+                    const chunks = [];
+                    for await (const chunk of userAvatar.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const avatarBase64 = buffer.toString('base64');
+                    albumReview.author.avatar = `data:image/png;base64,${avatarBase64}`;
+                } catch (avatarErr) {
+                    albumReview.author.avatar = null;
+                }
+            }
+
+            return res.status(200).json(albumReviews);
+        } catch (err) {
+            return res.status(404).json({ message: "Reviews not found" });
+        }
     }
 }

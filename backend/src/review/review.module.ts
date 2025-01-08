@@ -5,14 +5,16 @@ import {Review} from "../entities/review.entity";
 import {ReviewsController} from "./reviews.controller";
 import {ReviewsService} from "./reviews.service";
 import {Album} from "../entities/album.entity";
+import {User} from "../entities/user.entity";
+import {ImageService} from "../shared/image.service";
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        TypeOrmModule.forFeature([Review, Album]),
+        TypeOrmModule.forFeature([Review, Album, User]),
     ],
 
     controllers: [ReviewsController],
-    providers: [ReviewsService],
+    providers: [ReviewsService, ImageService],
 })
 export class ReviewsModule {}

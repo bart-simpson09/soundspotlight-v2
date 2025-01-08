@@ -4,9 +4,10 @@ import {ArrowLeft, Calendar, Heart, HeartSolid, Language, MusicDoubleNote, Star}
 import {useAlbumDetails} from "./UseAlbumDetails";
 import {useNavigate, useParams} from "react-router-dom";
 import ReviewModal from "../../components/ReviewModal";
+import ReviewTile from "../../components/reviewTile/ReviewTile";
 
 export const AlbumDetails: React.FC = () => {
-    const {album, fetchData, toggleFavorite, addReview} = useAlbumDetails();
+    const {album, fetchData, toggleFavorite, addReview, reviews} = useAlbumDetails();
     const {albumId} = useParams<{ albumId: string }>();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -104,24 +105,22 @@ export const AlbumDetails: React.FC = () => {
                         <button className="buttonPrimary" onClick={() => setIsModalOpen(true)}>Add your review</button>
                     </div>
                     <div className="flexColumn rowGap16 reviewsList">
-                        <div className="albumDetailsOpinionItem flexRow columnGap16">
-                            <img className="standardAvatar" src="#" alt=""/>
-                            <div className="flexColumn rowGap8 opinionContent">
-                                <div className="flexRow opinionHeader">
-                                    <div className="opinionBasicInfo flexRow columnGap8">
-                                        <p className="opinionAuthor">opinion author</p>
-                                        <span className="opinionItemDivider"></span>
-                                        <p id="creationDate">creation date</p>
-                                    </div>
-                                    <div className="flexRow columnGap8 opinionRate">
-                                        review rate
-                                        <i className="iconoir-star-solid"></i>
-                                    </div>
-                                </div>
-                                <p className="opinionDescription">secription</p>
-                            </div>
-                        </div>
-                        <p>This album doesn't have any opinions yet. Let's add your review!</p>
+                        {reviews && reviews.length > 0 ? (
+                            reviews.map((review) => (
+                                <ReviewTile
+                                    key={review.id}
+                                    id={review.id}
+                                    createDate={review.createDate}
+                                    rate={review.rate.toString()}
+                                    content={review.content}
+                                    authorFirstName={review.author.firstName}
+                                    authorLastName={review.author.lastName}
+                                    authorAvatar={review.author.avatar}
+                                />
+                            ))
+                        ) : (
+                            <p>This album doesn't have any opinions yet. Let's add your review!</p>
+                        )}
                     </div>
                     <div className={`modalArea ${isModalOpen ? "show" : ""}`} id="addReviewModal">
                         {isModalOpen && (

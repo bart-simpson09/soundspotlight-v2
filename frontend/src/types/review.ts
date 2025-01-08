@@ -6,8 +6,9 @@ export interface Review {
     rate: number;
     content: string;
     status: string;
+    createDate: Date;
     album: Pick<Album, 'albumTitle'> & {
         author: Pick<Album['author'], 'name'>
     };
-    author: Pick<User, 'firstName' | 'lastName'>;
+    author: Pick<User, 'firstName' | 'lastName' | 'avatar'>;
 }

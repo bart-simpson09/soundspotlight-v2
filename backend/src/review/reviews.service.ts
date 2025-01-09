@@ -63,6 +63,23 @@ export class ReviewsService {
             .getMany();
     }
 
+    async getUserReviews(userId: string) {
+        return await this.reviewsRepository
+            .createQueryBuilder('review')
+            .leftJoinAndSelect('review.album', 'album')
+            .leftJoinAndSelect('album.author', 'author')
+            .where('review.author.id = :userId', { userId })
+            .select([
+                'review.id',
+                'review.status',
+                'review.content',
+                'review.rate',
+                'album.albumTitle',
+                'author.name',
+            ])
+            .getMany();
+    }
+
     async modifyReviewStatus(id: string, action: string) {
         const existingReview = await this.reviewsRepository.findOne({
             where: { id },

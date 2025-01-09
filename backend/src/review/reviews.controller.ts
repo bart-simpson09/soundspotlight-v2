@@ -39,6 +39,22 @@ export class ReviewsController {
         }
     }
 
+    @Get('/userReviews')
+    @AuthMetaData('SkipAuthorizationCheck')
+    async userReviews(
+        @Res() res: Response,
+        @Req() req: Request,
+    ) {
+        try {
+            const currentUserId = req.headers['current_user_id'].toString();
+            const userReviews = await this.reviewsService.getUserReviews(currentUserId);
+
+            return res.status(200).json(userReviews);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
     @Patch('/reviews/modifyStatus')
     @Roles(Role.admin)
     async modifyAlbumStatus(

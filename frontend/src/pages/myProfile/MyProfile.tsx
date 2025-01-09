@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import {Message, MusicDoubleNote, Notes} from "iconoir-react";
+import {Message, MusicDoubleNote} from "iconoir-react";
 import {Album} from "../../types/album";
 import {useMyProfile} from "./useMyProfile";
 import {Review} from "../../types/review";
@@ -36,10 +36,10 @@ export const MyProfile: React.FC = () => {
             <div className="globalPageContainer flexColumn rowGap32 narrowPageContainer">
                 <h1>My profile</h1>
                 <div className="flexRow columnGap24">
-                    <img className="myProfileAvatar" src="/public/assets/imgs/avatars/<?= $avatar ?>" alt=""/>
+                    <img className="myProfileAvatar" src={sessionManager.currentUser?.avatar} alt=""/>
                     <div className="flexRow columnGap16 rowGap8">
                         <h1 style={{textWrap: "nowrap"}}>Welcome, {sessionManager.currentUser?.firstName}</h1>
-                        <form id="changeUserPhotoForm" action="changePhoto" method="POST" encType="multipart/form-data">
+                        <form id="changeUserPhotoForm" method="POST" encType="multipart/form-data">
                             <input type="file" id="photoInput" name="newPhoto" accept="image/png, image/jpeg"/>
                         </form>
 

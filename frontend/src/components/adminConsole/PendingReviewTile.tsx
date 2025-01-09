@@ -23,8 +23,7 @@ const PendingReviewTile: React.FC<PendingReviewTileProps> = ({ id, rate, content
                 </div>
                 <div className="flexRow columnGap16">
                     <div className="flexRow columnGap8 opinionRate">
-                        <StarSolid/>
-                        {rate}/5
+                        <StarSolid/> {rate}/5
                     </div>
                     <div className="flexRow columnGap8">
                         <button className="buttonOutlined positiveAction" onClick={onApprove}>Approve</button>

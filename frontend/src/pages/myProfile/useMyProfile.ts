@@ -26,7 +26,7 @@ export const useMyProfile = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const responseReviews = await API(sessionManager).reviews().getPending()
+            const responseReviews = await API(sessionManager).reviews().getUserReviews();
             const responseAlbums = await API(sessionManager).albums().getUserAlbums();
             setLoading(false);
 

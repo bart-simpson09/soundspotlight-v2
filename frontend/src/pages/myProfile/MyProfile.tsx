@@ -5,6 +5,7 @@ import {Album} from "../../types/album";
 import {useMyProfile} from "./useMyProfile";
 import {Review} from "../../types/review";
 import UserAlbumTile from "../../components/myProfile/UserAlbumTile";
+import UserReviewTile from "../../components/myProfile/UserReviewTile";
 
 export const MyProfile: React.FC = () => {
 
@@ -61,26 +62,20 @@ export const MyProfile: React.FC = () => {
                     </div>
                     <div>
                         <div id="yourReviews" className="tabContent flexColumn rowGap16" style={{display: activeTab === "yourReviews" ? 'block' : 'none'}}>
-                            <p>You didn't add any reviews yet.</p>
-                            <div className="yourProfileItem flexColumn rowGap16">
-                                <div className="flexRow yourProfileItemHeader">
-                                    <div className="flexColumn rowGap4">
-                                        <h4>Album title</h4>
-                                        <h5>Album author name</h5>
-                                    </div>
-                                    <div className="flexRow columnGap16">
-                                        <div className="flexRow columnGap8 opinionRate">
-                                            <i className="iconoir-star-solid"></i>
-                                            X / 5
-                                        </div>
-
-                                        <div className="yourAddedElementStatus statusPending flexCenter">Pending</div>
-                                        <div className="yourAddedElementStatus statusApproved flexCenter">Approved</div>
-                                        <div className="yourAddedElementStatus statusDeclined flexCenter">Declined</div>
-                                    </div>
-                                </div>
-                                <p>Review content</p>
-                            </div>
+                            {finalReviews && finalReviews.length > 0 ? (
+                                finalReviews.map((review) => (
+                                    <UserReviewTile
+                                        id={review.id}
+                                        key={review.id}
+                                        title={review.album.albumTitle}
+                                        author={review.album.author.name}
+                                        status={review.status}
+                                        rate={review.rate}
+                                        content={review.content}/>
+                                ))
+                            ) : (
+                                <p>You didn't add any reviews yet</p>
+                            )}
                         </div>
                         <div id="addedAlbums" className="tabContent flexColumn rowGap16" style={{display: activeTab === "addedAlbums" ? 'block' : 'none'}}>
                             {finalAlbums && finalAlbums.length > 0 ? (

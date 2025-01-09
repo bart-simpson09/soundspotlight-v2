@@ -1,18 +1,21 @@
 import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import {AlbumList, Notes, StarSolid, UserCircle} from "iconoir-react";
+import {AlbumList, Notes, UserCircle} from "iconoir-react";
 import {useAdminConsole} from "./useAdminConsole";
 import {Album} from "../../types/album";
-import PendingAlbumTile from "../../components/PendingAlbumTile";
+import PendingAlbumTile from "../../components/adminConsole/PendingAlbumTile";
 import {User} from "../../types";
-import UserTile from "../../components/UserTile";
+import UserTile from "../../components/adminConsole/UserTile";
+import {Review} from "../../types/review";
+import PendingReviewTile from "../../components/adminConsole/PendingReviewTile";
 
 export const AdminConsole: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState("pendingReviews");
-    const { albums, fetchData, modifyAlbumStatus, users, modifyUserRole } = useAdminConsole();
+    const { albums, fetchData, modifyAlbumStatus, users, modifyUserRole, reviews, modifyReviewStatus } = useAdminConsole();
     const [finalAlbums, setAlbums] = useState<Album[] | undefined>(albums);
     const [finalUsers, setUsers] = useState<User[] | undefined>(users);
+    const [finalReviews, setReviews] = useState<Review[] | undefined>(reviews);
 
     useEffect(() => {
         document.title = 'Admin console';
@@ -23,7 +26,8 @@ export const AdminConsole: React.FC = () => {
     useEffect(() => {
         setAlbums(albums);
         setUsers(users);
-    }, [albums, users]);
+        setReviews(reviews);
+    }, [albums, users, reviews]);
 
 
 
@@ -62,33 +66,24 @@ export const AdminConsole: React.FC = () => {
                 <div>
                     <div id="pendingReviews" className="tabContent flexColumn rowGap16"
                          style={{display: activeTab === "pendingReviews" ? 'block' : 'none'}}>
-                        <div className="yourProfileItem flexColumn rowGap16">
-                            <div className="flexRow yourProfileItemHeader">
-                                <div className="flexColumn rowGap4">
-                                    <h4>Album name</h4>
-                                    <h5>Album author name</h5>
-                                </div>
-                                <div className="flexRow columnGap16">
-                                    <div className="flexRow columnGap8 opinionRate">
-                                        <StarSolid/>
-                                        X/5
-                                    </div>
-                                    <div className="flexRow columnGap8">
-                                        <button className="buttonOutlined positiveAction">Approve</button>
-                                        <button className="buttonOutlined importantAction">Decline</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <p>Review content</p>
-                            <span className="pendingDivider"></span>
-                            <div className="flexRow columnGap8">
-                                <h5>Added by:</h5>
-                                <p>Review author first and last name</p>
-                            </div>
-                        </div>
-
-                        <p>There are no pending reviews at the moment.</p>
-
+                        {finalReviews && finalReviews.length > 0 ? (
+                            finalReviews.map((review) => (
+                                <PendingReviewTile
+                                    key={review.id}
+                                    id={review.id}
+                                    rate={review.rate.toString()}
+                                    content={review.content}
+                                    albumTitle={review.album.albumTitle}
+                                    albumAuthorName={review.album.author.name}
+                                    reviewAuthorFirstName={review.author.firstName}
+                                    reviewAuthorLastName={review.author.lastName}
+                                    onApprove={() => modifyReviewStatus(review.id, "approve")}
+                                    onDecline={() => modifyReviewStatus(review.id, "decline")}
+                                />
+                            ))
+                        ) : (
+                            <p>There are no pending reviews at the moment.</p>
+                        )}
                     </div>
                     <div id="pendingAlbums" className="tabContent flexColumn rowGap16"
                          style={{display: activeTab === "pendingAlbums" ? 'block' : 'none'}}>
@@ -110,7 +105,7 @@ export const AdminConsole: React.FC = () => {
                                 />
                             ))
                         ) : (
-                            <p>There are no pending reviews at the moment.</p>
+                            <p>There are no pending albums at the moment.</p>
                         )}
                     </div>
                     <div id="manageUsers" className="tabContent flexColumn rowGap16"

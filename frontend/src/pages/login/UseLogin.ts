@@ -33,6 +33,10 @@ export const useLogin = () => {
         if (sessionManager.currentUser) {
             navigate('/dashboard');
         }
+
+        if(!sessionManager.currentUser){
+            return;
+        }
     }, [logoutParam]);
 
     const loginUser = async (email: string, password: string ) => {

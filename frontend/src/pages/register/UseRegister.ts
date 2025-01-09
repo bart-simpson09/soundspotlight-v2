@@ -13,6 +13,10 @@ export const useRegister = () => {
         if (sessionManager.currentUser) {
             navigate('/dashboard');
         }
+
+        if(!sessionManager.currentUser){
+            return;
+        }
     });
 
     const register = async (dto: RegisterDto) => {

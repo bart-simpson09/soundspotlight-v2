@@ -251,6 +251,10 @@ body {
     margin: 0;
 }
 
+.modalArea.show {
+    display: flex;
+}
+
 .modal {
     background-color: var(--background-container);
     border-radius: 12px;

@@ -199,7 +199,7 @@ body {
 }
 
 .albumSmallCover {
-    width: 56px;
+    width: 56px !important;
     height: 56px;
     border-radius: 12px;
     object-fit: cover;

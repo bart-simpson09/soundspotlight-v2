@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import NavBar from "../components/navBar/NavBar";
+import NavBar from "../../components/navBar/NavBar";
 
 export const MyProfile: React.FC = () => {
 

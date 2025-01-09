@@ -7,7 +7,7 @@ import { NotFound } from './pages/NotFound';
 import { AddAlbum } from './pages/addAlbum/AddAlbum';
 import { AdminConsole } from './pages/adminConsole/AdminConsole';
 import { AlbumDetails } from './pages/albumDetails/AlbumDetails';
-import { MyProfile } from './pages/MyProfile';
+import { MyProfile } from './pages/myProfile/MyProfile';
 import { TopAlbums } from './pages/topAlbums/TopAlbums';
 import { YourFavorites } from './pages/yourFavorites/YourFavorites';
 

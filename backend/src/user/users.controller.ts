@@ -1,4 +1,15 @@
-import {Body, Controller, Get, HttpException, Patch, Post, Req, Res} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    HttpException,
+    Patch,
+    Post,
+    Req,
+    Res,
+    UploadedFile,
+    UseInterceptors
+} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {Request, Response} from "express";
 import {RegisterDto, registerDtoSchema} from "./dtos/registerDtoSchema";
@@ -6,6 +17,7 @@ import {LoginDto, loginDtoSchema} from "./dtos/loginDtoSchema";
 import {AuthMetaData} from "../guards/auth.metadata.decorator";
 import {Roles} from "../guards/roles.decorator";
 import {Role} from "../entities/user.entity";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @Controller()
 export class UsersController {
@@ -129,6 +141,17 @@ export class UsersController {
         } catch (err) {
             return res.status(500).json({ message: 'Internal server error' });
         }
+    }
+
+    @Patch('/users/changePhoto')
+    @AuthMetaData('SkipAuthorizationCheck')
+    @UseInterceptors(FileInterceptor('userPhoto'))
+    async changePhoto(
+        @UploadedFile() userPhoto: Express.Multer.File,
+        @Req() req: Request
+    ) {
+        const currentUserId = req.headers['current_user_id'].toString();
+        return this.usersService.changeUserPhoto(userPhoto, currentUserId);
     }
 
     @Patch('/users/modifyRole')

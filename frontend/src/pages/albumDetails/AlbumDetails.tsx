@@ -24,7 +24,7 @@ export const AlbumDetails: React.FC = () => {
 
     const handleToggleFavorite = async (albumId: string) => {
         await toggleFavorite(albumId);
-        fetchData(albumId);
+        await fetchData(albumId);
     };
 
     const handleReviewSubmit = async (review: string, rating: number) => {

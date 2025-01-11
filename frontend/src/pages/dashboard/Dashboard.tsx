@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavBar from "../../components/navBar/NavBar";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDashboard } from "./UseDashboard";
-import { AlbumList, CompactDisc, Language, User } from "iconoir-react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useDashboard} from "./UseDashboard";
+import {AlbumList, CompactDisc, Language, User} from "iconoir-react";
 import AlbumTile from "../../components/albumTile/AlbumTile";
 import {Album} from "../../types/album";
 
 export const Dashboard: React.FC = () => {
     let location = useLocation();
-    const { albums, languages, categories, loading, searchAlbums, fetchData, toggleFavorite } = useDashboard();
+    const {albums, languages, categories, searchAlbums, fetchData, toggleFavorite} = useDashboard();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState<string>('');
@@ -29,7 +29,7 @@ export const Dashboard: React.FC = () => {
 
     const handleSearch = async () => {
         if (!title && !author && category === '0' && language === '0') {
-            fetchData();
+            await fetchData();
         } else {
             const searchedAlbums = await searchAlbums(
                 title,
@@ -49,22 +49,14 @@ export const Dashboard: React.FC = () => {
         await toggleFavorite(albumId);
         setAlbums((prevAlbums) =>
             prevAlbums?.map((album) =>
-                album.id === albumId ? { ...album, isFavorite: !album.isFavorite } : album
+                album.id === albumId ? {...album, isFavorite: !album.isFavorite} : album
             )
         );
     };
 
-    if (loading) {
-        return (
-            <div>
-                Loading...
-            </div>
-        )
-    }
-
     return (
         <>
-            <NavBar highlighted="home" />
+            <NavBar highlighted="home"/>
 
             <div className="globalPageContainer flexColumn">
                 <div className="flexColumn rowGap24">
@@ -83,7 +75,7 @@ export const Dashboard: React.FC = () => {
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                 />
-                                <CompactDisc className={"inputIcon"} />
+                                <CompactDisc className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -98,7 +90,7 @@ export const Dashboard: React.FC = () => {
                                     value={author}
                                     onChange={(e) => setAuthor(e.target.value)}
                                 />
-                                <User className={"inputIcon"} />
+                                <User className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -120,7 +112,7 @@ export const Dashboard: React.FC = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <AlbumList className={"inputIcon"} />
+                                <AlbumList className={"inputIcon"}/>
                             </div>
                         </div>
 
@@ -142,7 +134,7 @@ export const Dashboard: React.FC = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <Language className={"inputIcon"} />
+                                <Language className={"inputIcon"}/>
                             </div>
                         </div>
 

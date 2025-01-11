@@ -7,7 +7,6 @@ import {Category} from "../../types/category";
 export const useAddAlbum = () => {
     const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
     const [categories, setCategories] = useState<Category[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
@@ -20,10 +19,8 @@ export const useAddAlbum = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const responseLanguages = await API(sessionManager).languages().get();
             const responseCategories = await API(sessionManager).categories().get();
-            setLoading(false);
 
             if( !responseLanguages || !responseCategories ) {
                 return;
@@ -33,7 +30,6 @@ export const useAddAlbum = () => {
             setCategories(responseCategories.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -41,14 +37,12 @@ export const useAddAlbum = () => {
 
     const addAlbum = async (formData: FormData) => {
         try {
-            setLoading(true);
             await API(sessionManager).albums().add(formData);
-            setLoading(false);
             alert("Album added and sent to review!");
         } catch (error) {
             console.error(error);
         }
     }
 
-    return {  languages, categories, loading, addAlbum };
+    return {  languages, categories, addAlbum };
 };

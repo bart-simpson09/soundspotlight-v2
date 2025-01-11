@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthorsController } from './authors.controller';
-import { AuthorsService } from './authors.service';
-import { Author } from '../entities/author.entity';
+import {Module} from '@nestjs/common';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {AuthorsController} from './authors.controller';
+import {AuthorsService} from './authors.service';
+import {Author} from '../entities/author.entity';
 import {JwtService} from "../shared/jwt.service";
 import {ConfigModule} from "@nestjs/config";
 
@@ -15,4 +15,5 @@ import {ConfigModule} from "@nestjs/config";
     controllers: [AuthorsController],
     providers: [AuthorsService, JwtService],
 })
-export class AuthorsModule {}
+export class AuthorsModule {
+}

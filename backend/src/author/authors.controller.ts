@@ -6,21 +6,17 @@ import {Response} from "express";
 export class AuthorsController {
     constructor(
         private readonly authorsService: AuthorsService,
-    ) {}
+    ) {
+    }
 
     @Get('/authors/')
     async authors(@Res() res: Response) {
         try {
-            try {
-                const authors = await this.authorsService.getAllAuthors();
-                return res.status(200).json(authors);
-
-            } catch (err) {
-                return res.status(401).json({ message: err.message });
-            }
+            const authors = await this.authorsService.getAllAuthors();
+            return res.status(200).json(authors);
 
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(401).json({message: err.message});
         }
     }
 }

@@ -10,9 +10,10 @@ import UserReviewTile from "../../components/myProfile/UserReviewTile";
 export const MyProfile: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState("yourReviews");
-    const { albums, fetchData, reviews, sessionManager } = useMyProfile();
+    const { albums, fetchData, reviews, sessionManager, changePhoto } = useMyProfile();
     const [finalAlbums, setAlbums] = useState<Album[] | undefined>(albums);
     const [finalReviews, setReviews] = useState<Review[] | undefined>(reviews);
+    const [userPhoto, setUserPhoto] = useState<File | null>(null);
 
     useEffect(() => {
         document.title = 'My profile';
@@ -29,6 +30,22 @@ export const MyProfile: React.FC = () => {
         setActiveTab(tabId);
     };
 
+    const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const fileInput = e.target;
+        const file = fileInput.files?.[0] || null;
+        setUserPhoto(file);
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("userPhoto", file);
+
+            await changePhoto(formData);
+
+            setUserPhoto(null);
+            fileInput.value = "";
+        }
+    };
+
     return (
         <div>
             <NavBar highlighted="none"/>
@@ -40,7 +57,13 @@ export const MyProfile: React.FC = () => {
                     <div className="flexRow columnGap16 rowGap8">
                         <h1 style={{textWrap: "nowrap"}}>Welcome, {sessionManager.currentUser?.firstName}</h1>
                         <form id="changeUserPhotoForm" method="POST" encType="multipart/form-data">
-                            <input type="file" id="photoInput" name="newPhoto" accept="image/png, image/jpeg"/>
+                            <input
+                                type="file"
+                                id="photoInput"
+                                name="newPhoto"
+                                accept="image/png, image/jpeg"
+                                onChange={handlePhotoChange}
+                            />
                         </form>
 
                     </div>

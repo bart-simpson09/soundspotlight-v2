@@ -143,7 +143,7 @@ export class UsersController {
         }
     }
 
-    @Patch('/users/changePhoto')
+    @Post('/users/changePhoto')
     @AuthMetaData('SkipAuthorizationCheck')
     @UseInterceptors(FileInterceptor('userPhoto'))
     async changePhoto(

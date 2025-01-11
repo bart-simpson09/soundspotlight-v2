@@ -112,6 +112,9 @@ export class UsersService {
     async changeUserPhoto(photoFile: Express.Multer.File, currentUserId: string) {
         const existingUser = await this.usersRepository.findOneBy({ id: currentUserId });
 
+        console.log(currentUserId);
+        console.log(photoFile);
+
         if (!existingUser) {
             throw new HttpException('User not found', 404);
         }

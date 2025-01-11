@@ -99,6 +99,29 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     action: action
                 });
             },
+
+            changePhoto: async (data: FormData) => {
+                const currentUserId = sessionStorage.getItem('current_user_id');
+
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage.');
+                    throw new Error('User not authenticated');
+                }
+
+                data.forEach((value, key) => {
+                    console.log(`${key}: ${value}`);
+                });
+
+                console.log(currentUserId)
+
+                return client.post('/users/changePhoto', data, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'current_user_id': currentUserId,
+                    },
+                    method: 'POST',
+                });
+            },
         }),
 
         authors: () => ({

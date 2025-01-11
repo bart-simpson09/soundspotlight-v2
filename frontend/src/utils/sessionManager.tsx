@@ -1,7 +1,7 @@
-import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User } from '../types';
-import { API } from './api';
+import React, {ReactNode, createContext, useContext, useEffect, useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {User} from '../types';
+import {API} from './api';
 
 interface SessionManager {
     currentUser: User | undefined;
@@ -11,6 +11,16 @@ interface SessionManager {
 }
 
 const STORAGE_KEY = 'current_user_id';
+
+const handleLogout = (
+    currentUserIdManager: CurrentUserIdManager,
+    setUser: React.Dispatch<React.SetStateAction<User | undefined>>,
+    navigate: ReturnType<typeof useNavigate>
+) => {
+    currentUserIdManager.setCurrentUserId(undefined);
+    setUser(undefined);
+    navigate('/login?logout=1');
+};
 
 class CurrentUserIdManager {
     currentUser: User | undefined;
@@ -31,9 +41,12 @@ class CurrentUserIdManager {
 
 const SessionManagerContext = createContext<SessionManager>({
     currentUser: undefined,
-    setCurrentUser: () => {},
-    logout: () => {},
-    fetchUser: () => {},
+    setCurrentUser: () => {
+    },
+    logout: () => {
+    },
+    fetchUser: () => {
+    },
 });
 
 export const useSessionManager = () => useContext(SessionManagerContext);
@@ -60,7 +73,7 @@ const getCachedUser = (): User | undefined => {
     return JSON.parse(user);
 };
 
-export const SessionManagerProvider: React.FC<Props> = ({ children }: Props) => {
+export const SessionManagerProvider: React.FC<Props> = ({children}: Props) => {
     const navigate = useNavigate();
 
     const currentUserIdManager = useMemo(() => new CurrentUserIdManager(), []);
@@ -83,14 +96,15 @@ export const SessionManagerProvider: React.FC<Props> = ({ children }: Props) => 
     const fetchUser = async (currentUserId: string) => {
         try {
             const response = await API(sessionManager).users().getById(currentUserId);
-            setUser(response.data);
-
+            if (response) {
+                setUser(response.data);
+            } else {
+                console.warn("Failed to fetch user: response is null");
+                handleLogout(currentUserIdManager, setUser, navigate);
+            }
         } catch (error) {
             console.trace(error);
-
-            currentUserIdManager.setCurrentUserId(undefined);
-            setUser(undefined);
-            navigate('/login?logout=1');
+            handleLogout(currentUserIdManager, setUser, navigate);
         }
     };
 

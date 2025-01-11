@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {User} from '../types';
 import {useSessionManager} from "./sessionManager";
-import {Author} from "../types/author";
 import {Language} from "../types/language";
 import {Category} from "../types/category";
 import {Album} from "../types/album";
@@ -14,17 +13,6 @@ export interface RegisterDto {
     password: string;
 }
 
-export interface AddAlbumDto {
-    cover: string
-    title: string;
-    author: string;
-    language: string;
-    category: string;
-    releaseDate: string;
-    numberOfSongs: number;
-    description: string;
-}
-
 export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
     const url = 'http://localhost:8080';
 
@@ -35,6 +23,28 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
         },
         withCredentials: true,
     });
+
+    const handleErrors = async <T>(fn: () => Promise<T>): Promise<T | null> => {
+        try {
+            return await fn();
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 403) {
+                console.error('Unauthorized access. Redirecting to login or refreshing session.');
+                sessionManager.logout();
+                return null;
+            }
+            throw error;
+        }
+    };
+
+    const getCurrentUserId = () => {
+        const userId = sessionStorage.getItem('current_user_id');
+        if (!userId) {
+            console.error('No user ID found in session storage.');
+            throw new Error('User not authenticated');
+        }
+        return userId;
+    };
 
     return {
         users: () => ({
@@ -61,451 +71,177 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                 });
             },
 
-            getById: async (id: string) => {
-                try {
-                    return await client<User>(`/users/${id}`, {
+            getById: (id: string) =>
+                handleErrors(() =>
+                    client<User>(`/users/${id}`, {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-                        }
-                    }
-                    throw error;
-                }
-            },
+                    })
+                ),
 
-            getAll: async () => {
-                try {
-                    return await client<User[]>(`/users`, {
+            getAll: () =>
+                handleErrors(() =>
+                    client<User[]>('/users', {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-                        }
-                    }
-                    throw error;
-                }
-            },
+                    })
+                ),
 
-            modifyRole: async (userId: string, action: string) => {
-                return client.patch('/users/modifyRole', {
+            modifyRole: (userId: string, action: string) =>
+                client.patch('/users/modifyRole', {
                     userID: userId,
-                    action: action
-                });
-            },
+                    action,
+                }),
 
-            changePhoto: async (data: FormData) => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
+            changePhoto: (data: FormData) => {
+                const currentUserId = getCurrentUserId();
                 return client.post('/users/changePhoto', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'current_user_id': currentUserId,
+                        current_user_id: currentUserId,
                     },
-                    method: 'POST',
                 });
-            },
-        }),
-
-        authors: () => ({
-            get: async () => {
-                try {
-                    return await client<Author[]>(`/authors/`, {
-                        method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        }
-                    }
-                    throw error;
-                }
             },
         }),
 
         languages: () => ({
-            get: async () => {
-                try {
-                    return await client<Language[]>(`/languages/`, {
+            get: () =>
+                handleErrors(() =>
+                    client<Language[]>('/languages/', {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        }
-                    }
-                    throw error;
-                }
-            },
+                    })
+                ),
         }),
 
         categories: () => ({
-            get: async () => {
-                try {
-                    return await client<Category[]>(`/categories/`, {
+            get: () =>
+                handleErrors(() =>
+                    client<Category[]>('/categories/', {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        }
-                    }
-                    throw error;
-                }
-            },
+                    })
+                ),
         }),
 
         albums: () => ({
-            getByParams: async (params?: { title?: string; author?: string; category?: string; language?: string }) => {
-                try {
-                    const queryParams = new URLSearchParams();
-
-                    if (params) {
-                        Object.entries(params).forEach(([key, value]) => {
-                            if (value) {
-                                queryParams.append(key, value);
-                            }
-                        });
-                    }
-
-                    const queryString = queryParams.toString();
-
-                    const currentUserId = sessionStorage.getItem('current_user_id');
-
-                    if (!currentUserId) {
-                        console.error('No user ID found in session storage.');
-                        return new Error('User not authenticated');
-                    }
-
-                    return await client<Album[]>(`/albums/?${queryString}`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getByParams: (params?: { title?: string; author?: string; category?: string; language?: string }) => {
+                const queryParams = new URLSearchParams(params as Record<string, string>);
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Album[]>(`/albums/?${queryParams.toString()}`, {
+                        headers: {current_user_id: currentUserId},
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        }
-                    }
-                    throw error;
-                }
+                    })
+                );
             },
 
-            getByID: async (id: string) => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                try {
-                    return await client<Album>(`/albums/${id}`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getByID: (id: string) => {
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Album>(`/albums/${id}`, {
+                        headers: {current_user_id: currentUserId},
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
+                    })
+                );
             },
 
-            getReviews: async (id: string) => {
-                try {
-                    return await client<Review[]>(`/reviews/${id}`, {
+            getReviews: (id: string) =>
+                handleErrors(() =>
+                    client<Review[]>(`/reviews/${id}`, {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
+                    })
+                ),
 
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
+            getFavorites: () => {
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Album[]>('/favAlbums', {
+                        headers: {current_user_id: currentUserId},
+                        method: 'GET',
+                    })
+                );
             },
 
-            getFavorites: async () => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                try {
-                    return await client<Album[]>(`/favAlbums`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getTop: () => {
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Album[]>('/topAlbums', {
+                        headers: {current_user_id: currentUserId},
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
+                    })
+                );
             },
 
-            getTop: async () => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                try {
-                    return await client<Album[]>(`/topAlbums`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getPending: () =>
+                handleErrors(() =>
+                    client<Album[]>('/pendingAlbums', {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
+                    })
+                ),
 
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
-            },
-
-            getPending: async () => {
-                try {
-                    return await client<Album[]>(`/pendingAlbums`, {
-                        method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
-            },
-
-            add: async (data: FormData) => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
+            add: (data: FormData) => {
+                const currentUserId = getCurrentUserId();
                 return client.post('/albums/add', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'current_user_id': currentUserId,
+                        current_user_id: currentUserId,
                     },
-                    method: 'POST',
-                    data,
                 });
             },
 
-            modifyStatus: async (albumId: string, action: string) => {
-                return client.patch('/albums/modifyStatus', {
+            modifyStatus: (albumId: string, action: string) =>
+                client.patch('/albums/modifyStatus', {
                     albumID: albumId,
-                    action: action
-                });
-            },
+                    action,
+                }),
 
-            getUserAlbums: async () => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                try {
-                    return await client<Album[]>(`/userAlbums`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getUserAlbums: () => {
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Album[]>('/userAlbums', {
+                        headers: {current_user_id: currentUserId},
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
+                    })
+                );
             },
         }),
 
         favorites: () => ({
-            toggle: async (albumId: string) => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                return client.post('/toggleFavorite', {
-                    albumId
-                }, {
-                    headers: {
-                        'current_user_id': currentUserId,
-                    },
-                    method: 'POST',
+            toggle: (albumId: string) => {
+                const currentUserId = getCurrentUserId();
+                return client.post('/toggleFavorite', {albumId}, {
+                    headers: {current_user_id: currentUserId},
                 });
             },
         }),
 
         reviews: () => ({
-            add: async (data: object) => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
+            add: (data: object) => {
+                const currentUserId = getCurrentUserId();
                 return client.post('/reviews/add', data, {
-                    headers: {
-                        'current_user_id': currentUserId,
-                    },
-                    method: 'POST',
+                    headers: {current_user_id: currentUserId},
                 });
             },
 
-            getPending: async () => {
-                try {
-                    return await client<Review[]>(`/pendingReviews`, {
+            getPending: () =>
+                handleErrors(() =>
+                    client<Review[]>('/pendingReviews', {
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
+                    })
+                ),
 
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
-            },
-
-            getUserReviews: async () => {
-                const currentUserId = sessionStorage.getItem('current_user_id');
-
-                if (!currentUserId) {
-                    console.error('No user ID found in session storage.');
-                    throw new Error('User not authenticated');
-                }
-
-                try {
-                    return await client<Review[]>(`/userReviews`, {
-                        headers: {
-                            'current_user_id': currentUserId,
-                        },
+            getUserReviews: () => {
+                const currentUserId = getCurrentUserId();
+                return handleErrors(() =>
+                    client<Review[]>('/userReviews', {
+                        headers: {current_user_id: currentUserId},
                         method: 'GET',
-                    });
-                } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        if (error.response?.status === 403) {
-                            console.error('Unauthorized access. Redirecting to login or refreshing session.');
-                            sessionManager.logout();
-
-                            return null;
-                        } else if (error.response?.status === 404) {
-                            console.error(`Error: ${error.response.data.message}`);
-                        }
-                    }
-
-                    throw error;
-                }
+                    })
+                );
             },
 
-            modifyStatus: async (reviewId: string, action: string) => {
-                return client.patch('/reviews/modifyStatus', {
-                    reviewId: reviewId,
-                    action: action
-                });
-            },
+            modifyStatus: (reviewId: string, action: string) =>
+                client.patch('/reviews/modifyStatus', {
+                    reviewId,
+                    action,
+                }),
         }),
     }
 }

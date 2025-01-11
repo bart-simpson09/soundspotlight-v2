@@ -46,14 +46,10 @@ export const useMyProfile = () => {
     };
 
     const changePhoto = async (formData: FormData) => {
-        formData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
-        });
         try {
             setLoading(true);
             await API(sessionManager).users().changePhoto(formData);
             setLoading(false);
-            alert("User avatar has been changed!!");
         } catch (error) {
             console.error(error);
         }

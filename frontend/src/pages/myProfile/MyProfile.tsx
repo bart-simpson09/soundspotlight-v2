@@ -41,6 +41,10 @@ export const MyProfile: React.FC = () => {
 
             await changePhoto(formData);
 
+            if (sessionManager.currentUser) {
+                sessionManager.fetchUser(sessionManager.currentUser.id);
+            }
+
             setUserPhoto(null);
             fileInput.value = "";
         }

@@ -108,12 +108,6 @@ export const API = (sessionManager: ReturnType<typeof useSessionManager>) => {
                     throw new Error('User not authenticated');
                 }
 
-                data.forEach((value, key) => {
-                    console.log(`${key}: ${value}`);
-                });
-
-                console.log(currentUserId)
-
                 return client.post('/users/changePhoto', data, {
                     headers: {
                         'Content-Type': 'multipart/form-data',

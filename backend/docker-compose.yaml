@@ -48,12 +48,33 @@ services:
       - .env
     depends_on:
       - database
+      - rabbitmq
     networks:
       - soundspotlight
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    restart: always
+    hostname: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - soundspotlight
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    env_file:
+      - .env
 
 volumes:
   pgadmin_data:
   database_data:
+  rabbitmq_data:
 
 networks:
   soundspotlight:

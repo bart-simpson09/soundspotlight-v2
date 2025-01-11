@@ -19,11 +19,10 @@ export const AppRoutes: React.FC = () => (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/addAlbum" element={<AddAlbum />} />
         <Route path="/adminConsole" element={<AdminConsole />} />
-            <Route path="/albumDetails/:albumId" element={<AlbumDetails />} />
-            <Route path="/myProfile" element={<MyProfile />} />
+        <Route path="/albumDetails/:albumId" element={<AlbumDetails />} />
+        <Route path="/myProfile" element={<MyProfile />} />
         <Route path="/topAlbums" element={<TopAlbums />} />
         <Route path="/yourFavorites" element={<YourFavorites />} />
         <Route path="*" element={<NotFound />} />
     </Routes>
 );
-

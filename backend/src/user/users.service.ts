@@ -8,6 +8,7 @@ import {LoginDto} from "./dtos/loginDtoSchema";
 import {JwtService} from "../shared/jwt.service";
 import {Response} from 'express';
 import {ImageService} from "../shared/image.service";
+import {ProducerService} from "../queues/producer.service";
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
         private usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
         private readonly imageService: ImageService,
+        private producerService: ProducerService,
     ) {
     }
 
@@ -42,6 +44,24 @@ export class UsersService {
         }
 
         const hash = await bcrypt.hash(dto.password, 8);
+
+        const emailData = {
+            to: dto.email,
+            subject: "Welcome to SoundSpotlight!",
+            message: `
+              <div>
+                <h1>Welcome to SoundSpotlight!</h1>
+                <p>Hi ${dto.firstName},</p>
+                <p>
+                  We’re excited to have you join the SoundSpotlight community! Here, you’ll find amazing music, connect with other enthusiasts, and explore a world of sound tailored just for you.
+                </p>
+                <p>Cheers,</p>
+                <p>The SoundSpotlight Team</p>
+              </div>`
+        }
+
+
+        await this.producerService.addToEmailQueue(emailData);
 
         return this.usersRepository.save({
             email: dto.email,

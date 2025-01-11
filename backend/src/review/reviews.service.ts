@@ -38,8 +38,8 @@ export class ReviewsService {
                 'user.lastName',
                 'user.avatar'
             ])
-            .where('album.id = :albumId', { albumId })
-            .andWhere('review.status = :status', { status: ReviewStatus.approved })
+            .where('album.id = :albumId', {albumId})
+            .andWhere('review.status = :status', {status: ReviewStatus.approved})
             .orderBy('review.createDate', 'DESC')
             .getMany();
     }
@@ -59,7 +59,7 @@ export class ReviewsService {
                 'user.firstName',
                 'user.lastName'
             ])
-            .where('review.status = :status', { status: 'pending' })
+            .where('review.status = :status', {status: 'pending'})
             .getMany();
     }
 
@@ -68,7 +68,7 @@ export class ReviewsService {
             .createQueryBuilder('review')
             .leftJoinAndSelect('review.album', 'album')
             .leftJoinAndSelect('album.author', 'author')
-            .where('review.author.id = :userId', { userId })
+            .where('review.author.id = :userId', {userId})
             .select([
                 'review.id',
                 'review.status',
@@ -82,7 +82,7 @@ export class ReviewsService {
 
     async modifyReviewStatus(id: string, action: string) {
         const existingReview = await this.reviewsRepository.findOne({
-            where: { id },
+            where: {id},
             relations: ['album']
         });
 
@@ -94,7 +94,7 @@ export class ReviewsService {
             existingReview.status = ReviewStatus.approved;
 
             const albumId = existingReview.album.id;
-            const album = await this.albumsRepository.findOneBy({ id: albumId });
+            const album = await this.albumsRepository.findOneBy({id: albumId});
 
             if (album.avgRate === 0) {
                 album.avgRate = existingReview.rate;

@@ -22,7 +22,7 @@ export class UsersService {
     }
 
     async verify(dto: LoginDto) {
-        const user = await this.usersRepository.findOneBy({ email: dto.email });
+        const user = await this.usersRepository.findOneBy({email: dto.email});
 
         if (!user) {
             return null;
@@ -37,7 +37,7 @@ export class UsersService {
     }
 
     async register(dto: RegisterDto) {
-        const existingUser = await this.usersRepository.findOneBy({ email: dto.email });
+        const existingUser = await this.usersRepository.findOneBy({email: dto.email});
 
         if (existingUser) {
             throw new HttpException('User with this email already exists', 409);
@@ -102,7 +102,7 @@ export class UsersService {
     }
 
     async getUserAvatar(id: string): Promise<StreamableFile> {
-        const user = await this.usersRepository.findOneBy({ id: id });
+        const user = await this.usersRepository.findOneBy({id: id});
 
         if (!user) {
             throw new HttpException('User not found', 404);
@@ -112,7 +112,7 @@ export class UsersService {
     }
 
     async modifyUserRole(id: string, action: string) {
-        const existingUser = await this.usersRepository.findOneBy({ id });
+        const existingUser = await this.usersRepository.findOneBy({id});
 
         if (!existingUser) {
             throw new HttpException('User not found', 404);
@@ -130,10 +130,7 @@ export class UsersService {
     }
 
     async changeUserPhoto(photoFile: Express.Multer.File, currentUserId: string) {
-        const existingUser = await this.usersRepository.findOneBy({ id: currentUserId });
-
-        console.log(currentUserId);
-        console.log(photoFile);
+        const existingUser = await this.usersRepository.findOneBy({id: currentUserId});
 
         if (!existingUser) {
             throw new HttpException('User not found', 404);
@@ -145,5 +142,19 @@ export class UsersService {
 
         delete existingUser.password;
         return existingUser;
+    }
+
+    async fetchAndEncodeAvatar(userId: string): Promise<string | null> {
+        try {
+            const avatarFile = await this.getUserAvatar(userId);
+            const chunks = [];
+            for await (const chunk of avatarFile.getStream()) {
+                chunks.push(chunk);
+            }
+            const buffer = Buffer.concat(chunks);
+            return `data:image/png;base64,${buffer.toString('base64')}`;
+        } catch {
+            return null;
+        }
     }
 }

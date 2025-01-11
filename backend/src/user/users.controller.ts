@@ -23,7 +23,7 @@ import {FileInterceptor} from "@nestjs/platform-express";
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        ) {
+    ) {
     }
 
     @Post('/auth/login')
@@ -56,7 +56,7 @@ export class UsersController {
                 message: err.message,
             }));
             throw new HttpException(
-                { message: 'Validation failed', errors: validationErrors },
+                {message: 'Validation failed', errors: validationErrors},
                 400
             );
         }
@@ -75,7 +75,7 @@ export class UsersController {
         response.clearCookie('jwt', {
             httpOnly: true,
         });
-        response.status(200).json({ message: 'Logged out successfully' });
+        response.status(200).json({message: 'Logged out successfully'});
         response.end();
     }
 
@@ -87,27 +87,16 @@ export class UsersController {
             const user = await this.usersService.getUserById(userId);
 
             if (!user) {
-                return res.status(404).json({ message: "User not found" });
+                return res.status(404).json({message: "User not found"});
             }
 
             delete user.password;
 
-            try {
-                const avatarFile = await this.usersService.getUserAvatar(userId);
-                const chunks = [];
-                for await (const chunk of avatarFile.getStream()) {
-                    chunks.push(chunk);
-                }
-                const buffer = Buffer.concat(chunks);
-                const avatarBase64 = buffer.toString('base64');
-                user.avatar = `data:image/png;base64,${avatarBase64}`;
-            } catch (avatarErr) {
-                user.avatar = null;
-            }
+            user.avatar = await this.usersService.fetchAndEncodeAvatar(userId);
 
             return res.status(200).json(user);
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({message: 'Internal server error'});
         }
     }
 
@@ -118,33 +107,20 @@ export class UsersController {
             const users = await this.usersService.getAllUsers();
 
             if (!users || users.length === 0) {
-                return res.status(404).json({ message: "Users not found" });
+                return res.status(404).json({message: "Users not found"});
             }
 
-            for (const user of users) {
-                delete user.password;
-                try {
-                    const avatarFile = await this.usersService.getUserAvatar(user.id);
-                    const chunks = [];
-                    for await (const chunk of avatarFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const avatarBase64 = buffer.toString('base64');
-                    user.avatar = `data:image/png;base64,${avatarBase64}`;
-                } catch (avatarErr) {
-                    user.avatar = null;
-                }
-            }
+            await Promise.all(users.map(async (user) => {
+                user.avatar = await this.usersService.fetchAndEncodeAvatar(user.id);
+            }));
 
             return res.status(200).json(users);
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({message: 'Internal server error'});
         }
     }
 
     @Post('/users/changePhoto')
-    @AuthMetaData('SkipAuthorizationCheck')
     @UseInterceptors(FileInterceptor('userPhoto'))
     async changePhoto(
         @UploadedFile() userPhoto: Express.Multer.File,
@@ -159,7 +135,7 @@ export class UsersController {
     async modifyUserRole(
         @Body() body: { userID: string; action: string },
     ) {
-        const { userID, action } = body;
+        const {userID, action} = body;
         return this.usersService.modifyUserRole(userID, action);
     }
 }

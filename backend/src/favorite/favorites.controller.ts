@@ -1,7 +1,6 @@
 import {Body, Controller, Post, Req, Res} from '@nestjs/common';
 import {Request, Response} from "express";
 import {FavoritesService} from "./favorites.service";
-import {AuthMetaData} from "../guards/auth.metadata.decorator";
 
 @Controller()
 export class FavoritesController {
@@ -11,7 +10,6 @@ export class FavoritesController {
     }
 
     @Post('/toggleFavorite')
-    @AuthMetaData('SkipAuthorizationCheck')
     async favorites(
         @Res() res: Response,
         @Req() req: Request,

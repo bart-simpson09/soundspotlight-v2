@@ -40,7 +40,7 @@ export class Album {
     @Column({name: 'description', type: 'text'})
     description: string;
 
-    @Column({ type: 'double precision', default: () => '0' })
+    @Column({type: 'double precision', default: () => '0'})
     avgRate: number;
 
     @Column({name: 'cover_image_url'})
@@ -49,7 +49,7 @@ export class Album {
     @Column({name: 'release_date', type: "date"})
     releaseDate: Date;
 
-    @Column({name: 'upload_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({name: 'upload_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     uploadDate: Date;
 
     @ManyToOne(() => User, user => user.albums)

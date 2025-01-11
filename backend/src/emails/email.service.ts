@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 interface ISendMail {
@@ -23,7 +23,7 @@ export class MailService {
     }
 
 
-    async send({ to, subject, message }: ISendMail): Promise<boolean> {
+    async send({to, subject, message}: ISendMail): Promise<boolean> {
         console.log("Content:", to, subject, message);
         const mailOptions = {
             from: process.env.GOOGLE_MAIL_APP_EMAIL,

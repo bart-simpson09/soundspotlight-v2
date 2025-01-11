@@ -24,6 +24,7 @@ export class MailService {
 
 
     async send({ to, subject, message }: ISendMail): Promise<boolean> {
+        console.log("Content:", to, subject, message);
         const mailOptions = {
             from: process.env.GOOGLE_MAIL_APP_EMAIL,
             to,

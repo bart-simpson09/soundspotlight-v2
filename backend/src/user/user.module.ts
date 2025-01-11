@@ -9,12 +9,13 @@ import {ImageService} from "../shared/image.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import * as path from "node:path";
-import {MailService} from "../emails/email.service";
+import {QueueModule} from "../queues/queue.module";
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
         TypeOrmModule.forFeature([User]),
+        QueueModule,
         MulterModule.register({
             storage: diskStorage({
                 destination: path.resolve(__dirname + '../../../src/assets/avatars'),
@@ -29,7 +30,7 @@ import {MailService} from "../emails/email.service";
         }),
     ],
     controllers: [UsersController],
-    providers: [UsersService, JwtService, ImageService, MailService],
+    providers: [UsersService, JwtService, ImageService],
 })
 export class UserModule {
 }

@@ -1,6 +1,7 @@
-import {Controller, Get, Res} from '@nestjs/common';
+import {Controller, Get, HttpStatus, Res} from '@nestjs/common';
 import {Response} from "express";
 import {CategoriesService} from "./categories.service";
+import {ApiOperation, ApiResponse} from "@nestjs/swagger";
 
 @Controller()
 export class CategoriesController {
@@ -10,6 +11,15 @@ export class CategoriesController {
     }
 
     @Get('/categories/')
+    @ApiOperation({ summary: 'Retrieve a list of categories' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of categories retrieved successfully.',
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'Unauthorized access.',
+    })
     async categories(@Res() res: Response) {
         try {
             const categories = await this.categoriesService.getAllCategories();

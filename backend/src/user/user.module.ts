@@ -9,6 +9,7 @@ import {ImageService} from "../shared/image.service";
 import {MulterModule} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import * as path from "node:path";
+import {MailService} from "../emails/email.service";
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import * as path from "node:path";
         }),
     ],
     controllers: [UsersController],
-    providers: [UsersService, JwtService, ImageService],
+    providers: [UsersService, JwtService, ImageService, MailService],
 })
 export class UserModule {
 }

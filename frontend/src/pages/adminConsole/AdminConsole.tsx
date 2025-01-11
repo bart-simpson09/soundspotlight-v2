@@ -29,6 +29,8 @@ export const AdminConsole: React.FC = () => {
         setReviews(reviews);
     }, [albums, users, reviews]);
 
+
+
     const handleTabClick = (tabId: string) => {
         setActiveTab(tabId);
     };

@@ -5,5 +5,5 @@ export const UseNavBar = () => {
 
     const logout = () => sessionManager.logout();
 
-    return { user: sessionManager.currentUser, logout };
+    return {user: sessionManager.currentUser, logout};
 };

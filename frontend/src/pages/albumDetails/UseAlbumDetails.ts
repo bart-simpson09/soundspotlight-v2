@@ -8,7 +8,6 @@ import {Review} from "../../types/review";
 export const useAlbumDetails = () => {
     const [album, setAlbum] = useState<Album | undefined>(undefined);
     const [reviews, setReviews] = useState<Review[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
     const { albumId } = useParams<{ albumId: string }>();
     const navigate = useNavigate();
@@ -24,11 +23,13 @@ export const useAlbumDetails = () => {
     }, [albumId]);
 
     const fetchData = async (albumId: string) => {
+        if (!sessionManager.currentUser) {
+            return;
+        }
+
         try {
-            setLoading(true);
             const responseAlbum = await API(sessionManager).albums().getByID(albumId);
             const responseReviews = await API(sessionManager).albums().getReviews(albumId);
-            setLoading(false);
 
             if (responseAlbum && responseAlbum.data) {
                 setAlbum(responseAlbum.data);
@@ -54,9 +55,7 @@ export const useAlbumDetails = () => {
 
     const addReview = async (reviewDate: object) => {
         try {
-            setLoading(true);
             await API(sessionManager).reviews().add(reviewDate);
-            setLoading(false);
             alert("Review added and sent to administration!");
         } catch (error) {
             console.error(error);

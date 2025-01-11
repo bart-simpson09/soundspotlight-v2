@@ -6,11 +6,10 @@ import {AxiosResponse} from "axios";
 
 export const useTopAlbums = () => {
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
-        if(!sessionManager.currentUser){
+        if (!sessionManager.currentUser) {
             return;
         }
 
@@ -23,9 +22,7 @@ export const useTopAlbums = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const responseAlbums = await API(sessionManager).albums().getTop();
-            setLoading(false);
 
             if (!isAxiosResponse(responseAlbums)) {
                 console.error('Unexpected response format');
@@ -35,7 +32,6 @@ export const useTopAlbums = () => {
             setAlbums(responseAlbums.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -49,5 +45,5 @@ export const useTopAlbums = () => {
         }
     };
 
-    return {  albums, loading, fetchData, toggleFavorite };
+    return {  albums, fetchData, toggleFavorite };
 };

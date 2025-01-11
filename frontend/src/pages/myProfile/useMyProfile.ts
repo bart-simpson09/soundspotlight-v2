@@ -8,7 +8,6 @@ import {Review} from "../../types/review";
 export const useMyProfile = () => {
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
     const [reviews, setReviews] = useState<Review[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
@@ -25,10 +24,8 @@ export const useMyProfile = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const responseReviews = await API(sessionManager).reviews().getUserReviews();
             const responseAlbums = await API(sessionManager).albums().getUserAlbums();
-            setLoading(false);
 
             if (!isAxiosResponse(responseAlbums) || !isAxiosResponse(responseReviews)) {
                 console.error('Unexpected response format');
@@ -39,7 +36,6 @@ export const useMyProfile = () => {
             setReviews(responseReviews.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -47,13 +43,11 @@ export const useMyProfile = () => {
 
     const changePhoto = async (formData: FormData) => {
         try {
-            setLoading(true);
             await API(sessionManager).users().changePhoto(formData);
-            setLoading(false);
         } catch (error) {
             console.error(error);
         }
     }
 
-    return {  albums, loading, fetchData, reviews, sessionManager, changePhoto };
+    return {  albums, fetchData, reviews, sessionManager, changePhoto };
 };

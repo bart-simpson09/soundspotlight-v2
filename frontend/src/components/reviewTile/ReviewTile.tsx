@@ -11,7 +11,15 @@ interface ReviewTileProps {
     authorAvatar: string;
 }
 
-const ReviewTile: React.FC<ReviewTileProps> = ({ id, createDate, rate, content, authorFirstName, authorLastName, authorAvatar }) => {
+const ReviewTile: React.FC<ReviewTileProps> = ({
+                                                   id,
+                                                   createDate,
+                                                   rate,
+                                                   content,
+                                                   authorFirstName,
+                                                   authorLastName,
+                                                   authorAvatar
+                                               }) => {
 
     const date = new Date(createDate);
 

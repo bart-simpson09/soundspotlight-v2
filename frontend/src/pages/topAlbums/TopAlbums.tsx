@@ -8,7 +8,7 @@ import {useTopAlbums} from "./useTopAlbums";
 export const TopAlbums: React.FC = () => {
 
     let location = useLocation();
-    const { albums, loading, fetchData, toggleFavorite } = useTopAlbums();
+    const { albums, fetchData, toggleFavorite } = useTopAlbums();
     const navigate = useNavigate();
 
     const [refreshedAlbums, setAlbums] = useState<Album[] | undefined>(albums);
@@ -35,16 +35,6 @@ export const TopAlbums: React.FC = () => {
             )
         );
     };
-
-    if (loading) {
-        return (
-            <div>
-                Loading...
-            </div>
-        )
-    }
-
-    console.log(refreshedAlbums);
 
     return (
         <div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { API } from '../../utils/api';
+import {useEffect, useState} from 'react';
+import {API} from '../../utils/api';
 import {useSessionManager} from "../../utils/sessionManager";
 import {Language} from "../../types/language";
 import {Category} from "../../types/category";
@@ -10,11 +10,10 @@ export const useDashboard = () => {
     const [languages, setLanguages] = useState<Language[] | undefined>(undefined);
     const [categories, setCategories] = useState<Category[] | undefined>(undefined);
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
-        if(!sessionManager.currentUser){
+        if (!sessionManager.currentUser) {
             return;
         }
         fetchData();
@@ -26,11 +25,9 @@ export const useDashboard = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const responseLanguages = await API(sessionManager).languages().get();
             const responseCategories = await API(sessionManager).categories().get();
             const responseAlbums = await API(sessionManager).albums().getByParams();
-            setLoading(false);
 
             if (
                 !isAxiosResponse(responseLanguages) ||
@@ -46,7 +43,6 @@ export const useDashboard = () => {
             setAlbums(responseAlbums.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -54,15 +50,12 @@ export const useDashboard = () => {
 
     const searchAlbums = async (title?: string, author?: string, category?: string, language?: string) => {
         try {
-            setLoading(true);
             const searchedAlbums = await API(sessionManager).albums().getByParams({
                 title,
                 author,
                 category,
                 language
             });
-
-            setLoading(false);
 
             if (!isAxiosResponse(searchedAlbums)) {
                 console.error('Unexpected response format');
@@ -74,7 +67,6 @@ export const useDashboard = () => {
             }
         } catch (error) {
             console.trace(error);
-            setLoading(false);
             alert('Failed to fetch data.');
         }
     };
@@ -87,5 +79,5 @@ export const useDashboard = () => {
         }
     };
 
-    return {  languages, categories, albums, loading, searchAlbums, fetchData, toggleFavorite };
+    return {languages, categories, albums, searchAlbums, fetchData, toggleFavorite};
 };

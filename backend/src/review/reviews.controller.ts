@@ -2,7 +2,6 @@ import {Body, Controller, Get, Patch, Post, Req, Res} from '@nestjs/common';
 import {Request, Response} from "express";
 import {ReviewsService} from "./reviews.service";
 import {ReviewDto} from "./dtos/reviewDtoSchema";
-import {AuthMetaData} from "../guards/auth.metadata.decorator";
 import {Roles} from "../guards/roles.decorator";
 import {Role} from "../entities/user.entity";
 import {ImageService} from "../shared/image.service";
@@ -12,10 +11,10 @@ export class ReviewsController {
     constructor(
         private readonly reviewsService: ReviewsService,
         private readonly imageService: ImageService,
-    ) {}
+    ) {
+    }
 
     @Post('/reviews/add')
-    @AuthMetaData('SkipAuthorizationCheck')
     async addReview(
         @Body() reviewDto: ReviewDto,
         @Req() req: Request
@@ -26,7 +25,6 @@ export class ReviewsController {
 
     @Get('/pendingReviews')
     @Roles(Role.admin)
-    //@AuthMetaData('SkipAuthorizationCheck')
     async pendingReviews(
         @Res() res: Response,
     ) {
@@ -35,12 +33,11 @@ export class ReviewsController {
 
             return res.status(200).json(pendingReviews);
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({message: 'Internal server error'});
         }
     }
 
     @Get('/userReviews')
-    @AuthMetaData('SkipAuthorizationCheck')
     async userReviews(
         @Res() res: Response,
         @Req() req: Request,
@@ -51,7 +48,7 @@ export class ReviewsController {
 
             return res.status(200).json(userReviews);
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({message: 'Internal server error'});
         }
     }
 
@@ -60,12 +57,11 @@ export class ReviewsController {
     async modifyAlbumStatus(
         @Body() body: { reviewId: string; action: string },
     ) {
-        const { reviewId, action } = body;
+        const {reviewId, action} = body;
         return this.reviewsService.modifyReviewStatus(reviewId, action);
     }
 
     @Get('/reviews/:id')
-    @AuthMetaData('SkipAuthorizationCheck')
     async reviews(@Req() req: Request, @Res() res: Response) {
         const albumId = req.params.id;
 
@@ -89,7 +85,7 @@ export class ReviewsController {
 
             return res.status(200).json(albumReviews);
         } catch (err) {
-            return res.status(404).json({ message: "Reviews not found" });
+            return res.status(404).json({message: "Reviews not found"});
         }
     }
 }

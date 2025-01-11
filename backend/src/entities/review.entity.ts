@@ -21,7 +21,7 @@ export class Review {
     @JoinColumn({name: 'album_id'})
     album: Album;
 
-    @Column({name: 'create_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({name: 'create_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createDate: Date;
 
     @Column({name: 'rate', type: 'int'})

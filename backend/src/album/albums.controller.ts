@@ -3,7 +3,6 @@ import {Request, Response} from "express";
 import {AlbumsService} from "./albums.service";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {AlbumDto} from "./dtos/albumDtoSchema";
-import {AuthMetaData} from "../guards/auth.metadata.decorator";
 import {Role} from "../entities/user.entity";
 import {Roles} from "../guards/roles.decorator";
 
@@ -14,7 +13,6 @@ export class AlbumsController {
     ) {}
 
     @Get('/albums/')
-    @AuthMetaData('SkipAuthorizationCheck')
     async albums(
         @Res() res: Response,
         @Req() req: Request,
@@ -35,20 +33,9 @@ export class AlbumsController {
                 currentUserId
             });
 
-            for (const album of albums) {
-                try {
-                    const coverFile = await this.albumsService.getAlbumCover(album.id);
-                    const chunks = [];
-                    for await (const chunk of coverFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const coverBase64 = buffer.toString('base64');
-                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-                } catch (avatarErr) {
-                    album.coverImageURL = null;
-                }
-            }
+            await Promise.all(albums.map(async (album) => {
+                album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
+            }));
 
             return res.status(200).json(albums);
         } catch (err) {
@@ -58,7 +45,6 @@ export class AlbumsController {
 
 
     @Get('/albums/:id')
-    @AuthMetaData('SkipAuthorizationCheck')
     async album(@Req() req: Request, @Res() res: Response) {
         const albumId = req.params.id;
         const currentUserId = req.headers['current_user_id'].toString();
@@ -66,18 +52,7 @@ export class AlbumsController {
         try {
             const album = await this.albumsService.getAlbumById(albumId, currentUserId);
 
-            try {
-                const coverFile = await this.albumsService.getAlbumCover(albumId);
-                const chunks = [];
-                for await (const chunk of coverFile.getStream()) {
-                    chunks.push(chunk);
-                }
-                const buffer = Buffer.concat(chunks);
-                const coverBase64 = buffer.toString('base64');
-                album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-            } catch (avatarErr) {
-                album.coverImageURL = null;
-            }
+            album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
 
             return res.status(200).json(album);
         } catch (err) {
@@ -86,7 +61,6 @@ export class AlbumsController {
     }
 
     @Get('/favAlbums')
-    @AuthMetaData('SkipAuthorizationCheck')
     async favoritesAlbums(
         @Res() res: Response,
         @Req() req: Request,
@@ -96,20 +70,9 @@ export class AlbumsController {
 
             const favAlbums = await this.albumsService.getFavoriteAlbums(currentUserId);
 
-            for (const album of favAlbums) {
-                try {
-                    const coverFile = await this.albumsService.getAlbumCover(album.id);
-                    const chunks = [];
-                    for await (const chunk of coverFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const coverBase64 = buffer.toString('base64');
-                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-                } catch (avatarErr) {
-                    album.coverImageURL = null;
-                }
-            }
+            await Promise.all(favAlbums.map(async (album) => {
+                album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
+            }));
 
             return res.status(200).json(favAlbums);
         } catch (err) {
@@ -118,7 +81,6 @@ export class AlbumsController {
     }
 
     @Get('/topAlbums')
-    //@AuthMetaData('SkipAuthorizationCheck')
     async topAlbums(
         @Res() res: Response,
         @Req() req: Request,
@@ -128,20 +90,9 @@ export class AlbumsController {
 
             const topAlbums = await this.albumsService.getTopAlbums(currentUserId);
 
-            for (const album of topAlbums) {
-                try {
-                    const coverFile = await this.albumsService.getAlbumCover(album.id);
-                    const chunks = [];
-                    for await (const chunk of coverFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const coverBase64 = buffer.toString('base64');
-                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-                } catch (avatarErr) {
-                    album.coverImageURL = null;
-                }
-            }
+            await Promise.all(topAlbums.map(async (album) => {
+                album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
+            }));
 
             return res.status(200).json(topAlbums);
         } catch (err) {
@@ -158,20 +109,9 @@ export class AlbumsController {
         try {
             const pendingAlbums = await this.albumsService.getPendingAlbums();
 
-            for (const album of pendingAlbums) {
-                try {
-                    const coverFile = await this.albumsService.getAlbumCover(album.id);
-                    const chunks = [];
-                    for await (const chunk of coverFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const coverBase64 = buffer.toString('base64');
-                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-                } catch (avatarErr) {
-                    album.coverImageURL = null;
-                }
-            }
+            await Promise.all(pendingAlbums.map(async (album) => {
+                album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
+            }));
 
             return res.status(200).json(pendingAlbums);
         } catch (err) {
@@ -180,7 +120,6 @@ export class AlbumsController {
     }
 
     @Post('/albums/add')
-    @AuthMetaData('SkipAuthorizationCheck')
     @UseInterceptors(FileInterceptor('albumCover'))
     async addAlbum(
         @Body() albumDto: AlbumDto,
@@ -201,7 +140,6 @@ export class AlbumsController {
     }
 
     @Get('/userAlbums')
-    @AuthMetaData('SkipAuthorizationCheck')
     async userAlbums(
         @Res() res: Response,
         @Req() req: Request,
@@ -210,20 +148,9 @@ export class AlbumsController {
             const currentUserId = req.headers['current_user_id'].toString();
             const userAlbums = await this.albumsService.getUserAlbums(currentUserId);
 
-            for (const album of userAlbums) {
-                try {
-                    const coverFile = await this.albumsService.getAlbumCover(album.id);
-                    const chunks = [];
-                    for await (const chunk of coverFile.getStream()) {
-                        chunks.push(chunk);
-                    }
-                    const buffer = Buffer.concat(chunks);
-                    const coverBase64 = buffer.toString('base64');
-                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
-                } catch (avatarErr) {
-                    album.coverImageURL = null;
-                }
-            }
+            await Promise.all(userAlbums.map(async (album) => {
+                album.coverImageURL = await this.albumsService.fetchAndEncodeCoverImage(album.id);
+            }));
 
             return res.status(200).json(userAlbums);
         } catch (err) {

@@ -25,7 +25,17 @@ const renderStatus = (status: string) => {
     }
 };
 
-const UserAlbumTile: React.FC<UserAlbumTileProps> = ({ id, coverImage, title, author, releaseDate, category, language, description, status }) => {
+const UserAlbumTile: React.FC<UserAlbumTileProps> = ({
+                                                         id,
+                                                         coverImage,
+                                                         title,
+                                                         author,
+                                                         releaseDate,
+                                                         category,
+                                                         language,
+                                                         description,
+                                                         status
+                                                     }) => {
     return (
         <div key={id} className="yourProfileItem flexRow columnGap16">
             <img src={coverImage} className="albumSmallCover" alt=""/>

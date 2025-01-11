@@ -1,7 +1,7 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { ConfirmChannel } from 'amqplib';
-import { MailService } from "../emails/email.service";
+import {Injectable, OnModuleInit, Logger} from '@nestjs/common';
+import amqp, {ChannelWrapper} from 'amqp-connection-manager';
+import {ConfirmChannel} from 'amqplib';
+import {MailService} from "../emails/email.service";
 
 @Injectable()
 export class ConsumerService implements OnModuleInit {
@@ -16,7 +16,7 @@ export class ConsumerService implements OnModuleInit {
     public async onModuleInit() {
         try {
             await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
-                await channel.assertQueue('emailQueue', { durable: true });
+                await channel.assertQueue('emailQueue', {durable: true});
                 await channel.consume('emailQueue', async (message) => {
                     if (message) {
                         const content = JSON.parse(message.content.toString());

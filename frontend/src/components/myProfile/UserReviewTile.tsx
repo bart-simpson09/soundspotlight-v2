@@ -23,7 +23,7 @@ const renderStatus = (status: string) => {
     }
 };
 
-const UserReviewTile: React.FC<UserReviewTileProps> = ({ id, title, author, status, rate, content }) => {
+const UserReviewTile: React.FC<UserReviewTileProps> = ({id, title, author, status, rate, content}) => {
     return (
         <div key={id} className="yourProfileItem flexColumn rowGap16">
             <div className="flexRow yourProfileItemHeader">

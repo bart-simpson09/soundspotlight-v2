@@ -229,5 +229,20 @@ export class AlbumsService {
             .getMany();
     }
 
+    async fetchAndEncodeCoverImage(albumId: string): Promise<string | null> {
+        try {
+            const coverFile = await this.getAlbumCover(albumId);
+            const chunks = [];
+            for await (const chunk of coverFile.getStream()) {
+                chunks.push(chunk);
+            }
+            const buffer = Buffer.concat(chunks);
+            return `data:image/png;base64,${buffer.toString('base64')}`;
+        } catch {
+            return null;
+        }
+    }
+
+
 
 }

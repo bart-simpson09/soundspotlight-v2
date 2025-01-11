@@ -10,7 +10,6 @@ export const useAdminConsole = () => {
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
     const [users, setUsers] = useState<User[] | undefined>(undefined);
     const [reviews, setReviews] = useState<Review[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
@@ -27,11 +26,9 @@ export const useAdminConsole = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const responseReviews = await API(sessionManager).reviews().getPending()
             const responseAlbums = await API(sessionManager).albums().getPending();
             const responseUsers = await API(sessionManager).users().getAll();
-            setLoading(false);
 
             if (!isAxiosResponse(responseAlbums) || !isAxiosResponse(responseUsers) || !isAxiosResponse(responseReviews)) {
                 console.error('Unexpected response format');
@@ -43,7 +40,6 @@ export const useAdminConsole = () => {
             setReviews(responseReviews.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -52,7 +48,7 @@ export const useAdminConsole = () => {
     const modifyAlbumStatus = async (albumId: string, action: string) => {
         try {
             await API(sessionManager).albums().modifyStatus(albumId, action);
-            fetchData();
+            await fetchData();
         } catch (error) {
             console.error(error);
         }
@@ -61,7 +57,7 @@ export const useAdminConsole = () => {
     const modifyReviewStatus = async (reviewId: string, action: string) => {
         try {
             await API(sessionManager).reviews().modifyStatus(reviewId, action);
-            fetchData();
+            await fetchData();
         } catch (error) {
             console.error(error);
         }
@@ -70,11 +66,11 @@ export const useAdminConsole = () => {
     const modifyUserRole = async (userId: string, action: string) => {
         try {
             await API(sessionManager).users().modifyRole(userId, action);
-            fetchData();
+            await fetchData();
         } catch (error) {
             console.error(error);
         }
     };
 
-    return {  albums, loading, fetchData, modifyAlbumStatus, users, modifyUserRole, reviews, modifyReviewStatus };
+    return {  albums, fetchData, modifyAlbumStatus, users, modifyUserRole, reviews, modifyReviewStatus };
 };

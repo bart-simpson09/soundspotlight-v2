@@ -15,7 +15,18 @@ interface AlbumTileProps {
     toggleFavorite?: () => void;
 }
 
-const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, releaseDate, rate, category, language, onClick, isFavorite, toggleFavorite }) => {
+const AlbumTile: React.FC<AlbumTileProps> = ({
+                                                 coverImage,
+                                                 title,
+                                                 author,
+                                                 releaseDate,
+                                                 rate,
+                                                 category,
+                                                 language,
+                                                 onClick,
+                                                 isFavorite,
+                                                 toggleFavorite
+                                             }) => {
 
 
     const handleFavoriteClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -25,45 +36,45 @@ const AlbumTile: React.FC<AlbumTileProps> = ({coverImage, title, author, release
 
     return (
         <div className="albumItemContainer" onClick={onClick}>
-        <a className="albumItem flexColumn rowGap24">
-            <div className="albumItemCoverArea">
-                <img className="albumItemCover" src={coverImage} alt="Album-Cover"/>
-            </div>
-            <div className="albumItemContent flexColumn rowGap24">
-                <div className="flexColumn rowGap4">
-                    <h3>{title}</h3>
-                    <p>{author}</p>
+            <a className="albumItem flexColumn rowGap24">
+                <div className="albumItemCoverArea">
+                    <img className="albumItemCover" src={coverImage} alt="Album-Cover"/>
                 </div>
-                <div className="flexColumn rowGap8">
-                    <div className="flexRow columnGap8">
-                        <p className="albumItemDetailLabel">Release date</p>
-                        <p className="albumItemDetailText">{releaseDate}</p>
+                <div className="albumItemContent flexColumn rowGap24">
+                    <div className="flexColumn rowGap4">
+                        <h3>{title}</h3>
+                        <p>{author}</p>
                     </div>
-                    <div className="flexRow columnGap8">
-                        <p className="albumItemDetailLabel">Rate</p>
-                        <p className="albumItemDetailText">{rate}</p>
-                    </div>
-                    <div className="flexRow columnGap8">
-                        <p className="albumItemDetailLabel">Category</p>
-                        <p className="albumItemDetailText">{category}</p>
-                    </div>
-                    <div className="flexRow columnGap8">
-                        <p className="albumItemDetailLabel">Language</p>
-                        <p className="albumItemDetailText">{language}</p>
+                    <div className="flexColumn rowGap8">
+                        <div className="flexRow columnGap8">
+                            <p className="albumItemDetailLabel">Release date</p>
+                            <p className="albumItemDetailText">{releaseDate}</p>
+                        </div>
+                        <div className="flexRow columnGap8">
+                            <p className="albumItemDetailLabel">Rate</p>
+                            <p className="albumItemDetailText">{rate}</p>
+                        </div>
+                        <div className="flexRow columnGap8">
+                            <p className="albumItemDetailLabel">Category</p>
+                            <p className="albumItemDetailText">{category}</p>
+                        </div>
+                        <div className="flexRow columnGap8">
+                            <p className="albumItemDetailLabel">Language</p>
+                            <p className="albumItemDetailText">{language}</p>
+                        </div>
                     </div>
                 </div>
+            </a>
+            <div className="favouriteButtonDefault flexCenter favoriteButton" onClick={handleFavoriteClick}>
+                {isFavorite ? (
+                    <HeartSolid color="#ffffff" width={20} height={20}/>
+                ) : (
+                    <Heart color="#ffffff" width={20} height={20}/>
+                )}
             </div>
-        </a>
-        <div className="favouriteButtonDefault flexCenter favoriteButton" onClick={handleFavoriteClick}>
-            {isFavorite ? (
-                <HeartSolid color="#ffffff" width={20} height={20} />
-            ) : (
-                <Heart color="#ffffff" width={20} height={20} />
-            )}
         </div>
-    </div>
-)
-    ;
+    )
+        ;
 };
 
 export default AlbumTile;

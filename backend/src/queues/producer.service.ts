@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import amqp, { ChannelWrapper } from 'amqp-connection-manager';
-import { Channel } from 'amqplib';
+import {HttpException, HttpStatus, Injectable, Logger} from '@nestjs/common';
+import amqp, {ChannelWrapper} from 'amqp-connection-manager';
+import {Channel} from 'amqplib';
 
 @Injectable()
 export class ProducerService {
@@ -11,7 +11,7 @@ export class ProducerService {
         this.channelWrapper = connection.createChannel({
             setup: async (channel: Channel) => {
                 try {
-                    await channel.assertQueue('emailQueue', { durable: true });
+                    await channel.assertQueue('emailQueue', {durable: true});
                 } catch (error) {
                     Logger.error('Error asserting queue:', error.message);
                 }

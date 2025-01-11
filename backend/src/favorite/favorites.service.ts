@@ -22,11 +22,11 @@ export class FavoritesService {
             return {message: 'Favorite removed'};
         } else {
             const newFavorite = this.favoritesRepository.create({
-                user: { id: userId },
-                album: { id: albumId }
+                user: {id: userId},
+                album: {id: albumId}
             });
             await this.favoritesRepository.save(newFavorite);
-            return { message: 'Favorite added' };
+            return {message: 'Favorite added'};
         }
     }
 }

@@ -6,11 +6,10 @@ import {AxiosResponse} from "axios";
 
 export const useYourFavorites = () => {
     const [albums, setAlbums] = useState<Album[] | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
     const sessionManager = useSessionManager();
 
     useEffect(() => {
-        if(!sessionManager.currentUser){
+        if (!sessionManager.currentUser) {
             return;
         }
 
@@ -22,10 +21,12 @@ export const useYourFavorites = () => {
     }
 
     const fetchData = async () => {
+        if (!sessionManager.currentUser) {
+            return;
+        }
+
         try {
-            setLoading(true);
             const responseAlbums = await API(sessionManager).albums().getFavorites();
-            setLoading(false);
 
             if (!isAxiosResponse(responseAlbums)) {
                 console.error('Unexpected response format');
@@ -35,7 +36,6 @@ export const useYourFavorites = () => {
             setAlbums(responseAlbums.data);
         } catch (error) {
             console.trace(error);
-            setLoading(false);
 
             alert('Failed to fetch data.');
         }
@@ -49,5 +49,5 @@ export const useYourFavorites = () => {
         }
     };
 
-    return {  albums, loading, fetchData, toggleFavorite };
+    return {  albums, fetchData, toggleFavorite };
 };

@@ -7,7 +7,7 @@ import {useYourFavorites} from "./UseYourFavorites";
 
 export const YourFavorites: React.FC = () => {
     let location = useLocation();
-    const { albums, loading, fetchData, toggleFavorite } = useYourFavorites();
+    const { albums, fetchData, toggleFavorite } = useYourFavorites();
     const navigate = useNavigate();
 
     const [refreshedAlbums, setAlbums] = useState<Album[] | undefined>(albums);
@@ -30,14 +30,6 @@ export const YourFavorites: React.FC = () => {
         await toggleFavorite(albumId);
         await fetchData();
     };
-
-    if (loading) {
-        return (
-            <div>
-                Loading...
-            </div>
-        )
-    }
 
     return (
         <div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { AppRoutes } from './AppRoutes';
+import {BrowserRouter} from 'react-router-dom';
+import {AppRoutes} from './AppRoutes';
 import {SessionManagerProvider} from "./utils/sessionManager";
 
 import './styles/reset.css';
@@ -15,7 +15,7 @@ export const App: React.FC = () => {
     return (
         <BrowserRouter>
             <SessionManagerProvider>
-                <AppRoutes />
+                <AppRoutes/>
             </SessionManagerProvider>
         </BrowserRouter>
     );

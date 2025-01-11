@@ -6,21 +6,17 @@ import {LanguagesService} from "./languages.service";
 export class LanguagesController {
     constructor(
         private readonly languagesService: LanguagesService,
-    ) {}
+    ) {
+    }
 
     @Get('/languages/')
     async languages(@Res() res: Response) {
         try {
-            try {
-                const languages = await this.languagesService.getAllLanguages();
-                return res.status(200).json(languages);
-
-            } catch (err) {
-                return res.status(401).json({ message: err.message });
-            }
+            const languages = await this.languagesService.getAllLanguages();
+            return res.status(200).json(languages);
 
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(401).json({message: err.message});
         }
     }
 }

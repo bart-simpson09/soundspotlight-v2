@@ -1,5 +1,5 @@
-import { Album } from "./album";
-import { User } from "./user";
+import {Album} from "./album";
+import {User} from "./user";
 
 export interface Review {
     id: string;

@@ -7,7 +7,8 @@ import {AuthMetaData} from "../guards/auth.metadata.decorator";
 export class FavoritesController {
     constructor(
         private readonly favoritesService: FavoritesService,
-    ) {}
+    ) {
+    }
 
     @Post('/toggleFavorite')
     @AuthMetaData('SkipAuthorizationCheck')
@@ -19,16 +20,11 @@ export class FavoritesController {
         const currentUserId = req.headers['current_user_id'].toString()
 
         try {
-            try {
-                const result = await this.favoritesService.toggleFavorite(currentUserId, albumId);
-                return res.status(200).json(result);
-
-            } catch (err) {
-                return res.status(401).json({ message: err.message });
-            }
+            const result = await this.favoritesService.toggleFavorite(currentUserId, albumId);
+            return res.status(200).json(result);
 
         } catch (err) {
-            return res.status(500).json({ message: 'Internal server error' });
+            return res.status(401).json({message: err.message});
         }
     }
 }

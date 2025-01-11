@@ -13,7 +13,17 @@ interface PendingAlbumTileProps {
     grantAdmin: () => void;
 }
 
-const UserTile: React.FC<PendingAlbumTileProps> = ({ id, avatar, firstName, lastName, email, currentUserId, role, revokeAdmin, grantAdmin }) => {
+const UserTile: React.FC<PendingAlbumTileProps> = ({
+                                                       id,
+                                                       avatar,
+                                                       firstName,
+                                                       lastName,
+                                                       email,
+                                                       currentUserId,
+                                                       role,
+                                                       revokeAdmin,
+                                                       grantAdmin
+                                                   }) => {
 
     return (
         <div key={id} className="yourProfileItem flexRow yourProfileItemHeader">
@@ -22,7 +32,7 @@ const UserTile: React.FC<PendingAlbumTileProps> = ({ id, avatar, firstName, last
                 <div className="flexColumn">
                     <div className="flexRow columnGap4" id="userNameSection">
                         <h4>{firstName} {lastName}</h4>
-                        {role === "admin" && <UserCrown color={"#4CA6A8"} width={"20px"} height={"20px"} />}
+                        {role === "admin" && <UserCrown color={"#4CA6A8"} width={"20px"} height={"20px"}/>}
                     </div>
                     <h5>{email}</h5>
                 </div>

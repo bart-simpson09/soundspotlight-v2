@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { Star, StarSolid } from "iconoir-react";
+import React, {useState} from 'react';
+import {Star, StarSolid} from "iconoir-react";
 
-const ReviewModal: React.FC<{ onClose: () => void, onSubmit: (review: string, rating: number) => void }> = ({ onClose, onSubmit }) => {
+const ReviewModal: React.FC<{ onClose: () => void, onSubmit: (review: string, rating: number) => void }> = ({
+                                                                                                                onClose,
+                                                                                                                onSubmit
+                                                                                                            }) => {
     const [reviewContent, setReviewContent] = useState('');
     const [rating, setRating] = useState(0);
 
     const handleStarClick = (index: number) => {
-        // Reset rating if the same star is clicked
         if (rating === index + 1) {
             setRating(0);
         } else {
@@ -52,14 +54,14 @@ const ReviewModal: React.FC<{ onClose: () => void, onSubmit: (review: string, ra
                                 width={20}
                                 height={20}
                                 onClick={() => handleStarClick(index)}
-                                style={{ cursor: 'pointer' }}
+                                style={{cursor: 'pointer'}}
                             />
                         );
                     })}
                 </div>
             </div>
             <div className="flexRow columnGap16">
-                <button className="buttonOutlined" style={{ padding: '10.5px 16px' }} onClick={onClose}>
+                <button className="buttonOutlined" style={{padding: '10.5px 16px'}} onClick={onClose}>
                     Cancel
                 </button>
                 <button

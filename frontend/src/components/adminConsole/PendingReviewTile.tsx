@@ -13,7 +13,17 @@ interface PendingReviewTileProps {
     onDecline: () => void;
 }
 
-const PendingReviewTile: React.FC<PendingReviewTileProps> = ({ id, rate, content, albumTitle, albumAuthorName, reviewAuthorFirstName, reviewAuthorLastName, onApprove, onDecline }) => {
+const PendingReviewTile: React.FC<PendingReviewTileProps> = ({
+                                                                 id,
+                                                                 rate,
+                                                                 content,
+                                                                 albumTitle,
+                                                                 albumAuthorName,
+                                                                 reviewAuthorFirstName,
+                                                                 reviewAuthorLastName,
+                                                                 onApprove,
+                                                                 onDecline
+                                                             }) => {
     return (
         <div key={id} className="yourProfileItem flexColumn rowGap16">
             <div className="flexRow yourProfileItemHeader">

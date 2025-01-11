@@ -14,7 +14,19 @@ interface PendingAlbumTileProps {
     onDecline: () => void;
 }
 
-const PendingAlbumTile: React.FC<PendingAlbumTileProps> = ({ id, coverImage, title, author, releaseDate, category, language, description, addedBy, onApprove, onDecline }) => {
+const PendingAlbumTile: React.FC<PendingAlbumTileProps> = ({
+                                                               id,
+                                                               coverImage,
+                                                               title,
+                                                               author,
+                                                               releaseDate,
+                                                               category,
+                                                               language,
+                                                               description,
+                                                               addedBy,
+                                                               onApprove,
+                                                               onDecline
+                                                           }) => {
     return (
         <div key={id} className="yourProfileItem flexRow columnGap16">
             <img src={coverImage}

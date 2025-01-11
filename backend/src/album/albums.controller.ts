@@ -199,4 +199,35 @@ export class AlbumsController {
         const { albumID, action } = body;
         return this.albumsService.modifyAlbumStatus(albumID, action);
     }
+
+    @Get('/userAlbums')
+    @AuthMetaData('SkipAuthorizationCheck')
+    async userAlbums(
+        @Res() res: Response,
+        @Req() req: Request,
+    ) {
+        try {
+            const currentUserId = req.headers['current_user_id'].toString();
+            const userAlbums = await this.albumsService.getUserAlbums(currentUserId);
+
+            for (const album of userAlbums) {
+                try {
+                    const coverFile = await this.albumsService.getAlbumCover(album.id);
+                    const chunks = [];
+                    for await (const chunk of coverFile.getStream()) {
+                        chunks.push(chunk);
+                    }
+                    const buffer = Buffer.concat(chunks);
+                    const coverBase64 = buffer.toString('base64');
+                    album.coverImageURL = `data:image/png;base64,${coverBase64}`;
+                } catch (avatarErr) {
+                    album.coverImageURL = null;
+                }
+            }
+
+            return res.status(200).json(userAlbums);
+        } catch (err) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
 }

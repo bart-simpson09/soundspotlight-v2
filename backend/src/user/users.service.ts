@@ -108,4 +108,22 @@ export class UsersService {
 
         await this.usersRepository.save(existingUser);
     }
+
+    async changeUserPhoto(photoFile: Express.Multer.File, currentUserId: string) {
+        const existingUser = await this.usersRepository.findOneBy({ id: currentUserId });
+
+        console.log(currentUserId);
+        console.log(photoFile);
+
+        if (!existingUser) {
+            throw new HttpException('User not found', 404);
+        }
+
+        existingUser.avatar = "../src/assets/avatars/" + photoFile.filename;
+
+        await this.usersRepository.save(existingUser);
+
+        delete existingUser.password;
+        return existingUser;
+    }
 }

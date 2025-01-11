@@ -208,5 +208,26 @@ export class AlbumsService {
         await this.albumsRepository.save(existingAlbum);
     }
 
+    async getUserAlbums(userId: string) {
+        return await this.albumsRepository
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.language', 'language')
+            .leftJoinAndSelect('album.category', 'category')
+            .where('album.addedBy.id = :userId', { userId })
+            .select([
+                'album.id',
+                'album.albumTitle',
+                'album.description',
+                'album.status',
+                'album.coverImageURL',
+                'album.releaseDate',
+                'author.name',
+                'language.name',
+                'category.name',
+            ])
+            .getMany();
+    }
+
 
 }

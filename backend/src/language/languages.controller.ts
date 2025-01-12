@@ -1,6 +1,7 @@
-import {Controller, Get, Res} from '@nestjs/common';
+import {Controller, Get, HttpStatus, Res} from '@nestjs/common';
 import {Response} from "express";
 import {LanguagesService} from "./languages.service";
+import {ApiOperation, ApiResponse} from "@nestjs/swagger";
 
 @Controller()
 export class LanguagesController {
@@ -10,6 +11,15 @@ export class LanguagesController {
     }
 
     @Get('/languages/')
+    @ApiOperation({ summary: 'Retrieve a list of languages' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'List of languages retrieved successfully.',
+    })
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: 'Unauthorized access.',
+    })
     async languages(@Res() res: Response) {
         try {
             const languages = await this.languagesService.getAllLanguages();
